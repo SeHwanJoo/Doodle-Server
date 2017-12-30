@@ -1,12 +1,10 @@
 'use strict';
 
-const userModel = require('../models/UserModel');
+const nodemailer = require('nodemailer');
 const config = require('../config/config');
-
 const resMsg = require('../errors.json');
 
-
-const nodemailer = require('nodemailer');
+const userModel = require('../models/UserModel');
 
 
 
