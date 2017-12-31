@@ -19,4 +19,4 @@ const storageS3 = multerS3({
   }
 });
 
-exports.uploadSingle = multer({storage: storageS3}).single('collection_image');
+exports.uploadSingle = multer({storage: storageS3}).single('image');
