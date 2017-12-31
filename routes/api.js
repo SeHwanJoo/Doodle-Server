@@ -6,12 +6,19 @@ const doodleCtrl = require('../controllers/DoodleCtrl');
 const commentCtrl = require('../controllers/CommentCtrl');
 const scrapCtrl = require('../controllers/ScrapCtrl');
 
+const imageCtrl = require('../controllers/ImageCtrl');
+
+
 
 module.exports = (router) => {
 
-    // USER
-    router.route('/users/register')
-        .post(userCtrl.register);
+
+
+
+  // USER
+  router.route('/users/register')
+    .post(imageCtrl.uploadSingle, userCtrl.register);
+
 
     router.route('/users/login')
         .post(userCtrl.login);
