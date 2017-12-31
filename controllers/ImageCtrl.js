@@ -10,7 +10,7 @@ const s3 = new aws.S3();
 
 const storageS3 = multerS3({
   s3: s3,
-  bucket: 'yourarts-img',
+  bucket: 'doodle-s3',
   acl: 'public-read',
   key: function (req, file, callback) {
     console.log(file);
