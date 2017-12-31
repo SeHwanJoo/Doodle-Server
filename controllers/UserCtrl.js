@@ -23,7 +23,7 @@ exports.register = async(req, res, next) => {
 
 
   //TODO s3 dest 설정
-  let image;
+ let image;
   if (!req.file) { // 이미지가 없는 경우
     image = null;
   } else {
@@ -80,7 +80,7 @@ exports.check = async(req, res, next) => {
  ********************/
 exports.login = async(req, res, next) => {
 
-  if (!req.body.id || !req.body.pw) {
+  if (!req.body.email || !req.body.pw) {
     return res.status(400).end();
   }
 
