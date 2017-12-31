@@ -30,6 +30,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/swagger.json', function(req, res) {
+  res.json(require('./swagger.json'));
+});
+
 
 require('./routes')(app);
 
