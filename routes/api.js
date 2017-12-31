@@ -2,13 +2,14 @@
 
 const authCtrl = require('../controllers/AuthCtrl');
 const userCtrl = require('../controllers/UserCtrl');
+const imageCtrl = require('../controllers/ImageCtrl');
 
 
 module.exports = (router) => {
 
   // USER
   router.route('/users/register')
-    .post(userCtrl.register);
+    .post(imageCtrl.uploadSingle, userCtrl.register);
 
   router.route('/users/login')
     .post(userCtrl.login);

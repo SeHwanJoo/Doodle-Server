@@ -21,6 +21,8 @@ exports.register = async(req, res, next) => {
     pw = req.body.pw1
   }
 
+
+  //TODO s3 dest 설정
   let image;
   if (!req.file) { // 이미지가 없는 경우
     image = null;
@@ -35,7 +37,6 @@ exports.register = async(req, res, next) => {
       pw: config.do_cipher(pw),
       nickname: req.body.nickname,
       image: image
-
     };
 
     result = await userModel.register(userData);

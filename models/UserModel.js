@@ -9,7 +9,7 @@ const config = require('../config/config');
 
 /*******************
  *  Register
- *  @param: userData = {id, pw, nickname}
+ *  @param: userData = {email, pw, nickname}
  ********************/
 exports.register = (userData) => {
   return new Promise((resolve, reject) => {
@@ -30,7 +30,7 @@ exports.register = (userData) => {
   ).then(() => {
       return new Promise((resolve, reject) => {
         const sql =
-          "INSERT INTO user(email, pw, nickname, image) " +
+          "INSERT INTO users(email, pw, nickname, image) " +
           "VALUES (?, ?, ?, ?) ";
 
 
