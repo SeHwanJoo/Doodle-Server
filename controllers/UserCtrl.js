@@ -12,6 +12,8 @@ const userModel = require('../models/UserModel');
  *  Register
  ********************/
 exports.register = async(req, res, next) => {
+
+  //TODO pw, image validation
   let pw;
   if (req.body.pw1 !== req.body.pw2) {
     return res.status(400).json(resMsg[1404])
@@ -19,13 +21,20 @@ exports.register = async(req, res, next) => {
     pw = req.body.pw1
   }
 
+  let image;
+  if (!req.file) { // 이미지가 없는 경우
+    image = null;
+  } else {
+    image = req.file.location;
+  }
+
   let result = '';
   try {
     const userData = {
-      id: req.body.id,
+      email: req.body.email,
       pw: config.do_cipher(pw),
       nickname: req.body.nickname,
-      email: req.body.email,
+      image: image
 
     };
 
@@ -47,7 +56,7 @@ exports.register = async(req, res, next) => {
 exports.check = async(req, res, next) => {
   let result = '';
   try {
-    const userData = req.body.id;
+    const userData = req.body.email;
     result = await userModel.check(userData);
   } catch (error) {
     // console.log(error); // 1401
@@ -78,7 +87,7 @@ exports.login = async(req, res, next) => {
 
   try {
     const userData = {
-      id: req.body.id,
+      email: req.body.email,
       pw: config.do_cipher(req.body.pw)
     };
 
@@ -96,50 +105,6 @@ exports.login = async(req, res, next) => {
   return res.r(result);
 };
 
-exports.fbLogin = async(req, res,next) => {
-  const data = {
-    access_token : req.body.access_token
-  };
-
-  let userData = {};
-  let result ='';
-  const uri = {
-    method:'GET',
-    uri:'https://graph.facebook.com/v2.10/me?access_token='+data.access_token+'&fileds=id,name'
-  };
-
-  function option(error, response, body){
-    if(error){
-      throw error;
-    }
-
-    userData = JSON.parse(body);
-
-    cb(userData);
-  }
-
-  async function cb(data) {
-
-    try {
-      userData.id = data.id;
-      userData.name = data.name;
-
-      result = await userModel.fbLogin(userData);
-
-
-    } catch (error) {
-      console.log(error);
-      return next(error);
-    }
-
-    return res.r(result)
-
-  }
-  request(uri, option, cb);
-
-};
-
-
 exports.profile = async(req, res, next) => {
   let result ='';
   try {
@@ -154,6 +119,7 @@ exports.profile = async(req, res, next) => {
   return res.json(result);
 };
 
+
 /******
  * 닉네임수정
  * @param req
@@ -163,7 +129,7 @@ exports.edit = async(req, res, next) => {
   try {
 
     const editData = {
-      user_idx : req.user_idx,
+      idx : req.user_idx,
       nickname : req.body.nickname
     };
 
@@ -226,6 +192,8 @@ exports.findID = async(req,res,next) => {
 
 
 /************
+ * TODO 비밀번호를 찾기위한 조건 추가
+ * 17.12.31 조건 부족
  * PW 찾기 -> (ID && EAMIL) 일치하는 값이 있는경우
  * 임시비번으로 변경뒤 이메일 전송
  * @param req
@@ -282,7 +250,7 @@ exports.findPW = async (req, res, next) => {
   return res.r(result);
 };
 
-/**********8
+/**********
  * 인증번호 확인
  * 인증번호 불일치시 파라미터 불일치 메세지 전송
  * @param req
