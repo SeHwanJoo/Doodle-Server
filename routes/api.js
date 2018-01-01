@@ -24,7 +24,7 @@ module.exports = (router) => {
     .post(userCtrl.login);
 
   router.route('/users')
-    .get(userCtrl.profile)
+    .get(authCtrl.auth, userCtrl.profile)
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
 
@@ -41,7 +41,7 @@ module.exports = (router) => {
     .post(userCtrl.editPW);
 
   router.route('/doodle/all')
-    .post(doodleCtrl.allDoodle);
+    .post(authCtrl.auth ,doodleCtrl.allDoodle);
 
   router.route('/doodle/search/:keyword')
     .get(doodleCtrl.search);

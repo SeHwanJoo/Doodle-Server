@@ -109,7 +109,7 @@ exports.login = async(req, res, next) => {
 exports.profile = async(req, res, next) => {
   let result ='';
   try {
-    const userData = req.params.idx;
+    const userData = req.userIdx;
 
     result = await userModel.profile(userData)
 
