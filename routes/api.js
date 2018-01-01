@@ -28,8 +28,7 @@ module.exports = (router) => {
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
 
-  router.route('/users/search/:keyword')
-    .get(userCtrl.search);
+
 
   router.route('/users/find/id')
     .post(userCtrl.findID);
@@ -43,15 +42,18 @@ module.exports = (router) => {
   router.route('/doodle/all')
     .post(authCtrl.auth ,doodleCtrl.allDoodle);
 
-  router.route('/doodle/search/:keyword')
+
+  router.route('/search/users/:keyword')
+    .get(userCtrl.search);
+  router.route('/search/doodle/:keyword')
     .get(doodleCtrl.search);
 
 
 
   //댓글
-  router.route('/comment/write')
+  router.route('/comments')
     .post(commentCtrl.write);
-  router.route('/comment/read/:doodle_idx')
+  router.route('/comments/:idx')
     .get(commentCtrl.read);
 
   //scrap
