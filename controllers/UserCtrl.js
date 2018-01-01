@@ -22,6 +22,7 @@ exports.register = async(req, res, next) => {
   }
 
 
+
   //TODO s3 dest 설정
  let image;
   if (!req.file) { // 이미지가 없는 경우
