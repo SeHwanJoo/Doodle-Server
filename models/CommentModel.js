@@ -6,11 +6,9 @@ const pool = mysql.createPool(DBConfig);
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
-const moment_timezone = require('moment-timezone');
+
 moment.tz.setDefault('Asia/Seoul');
 
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
 
 /*******************
  *  allDoodl
@@ -21,10 +19,8 @@ exports.write = (writeData) => {
     transactionWrapper.getConnection(pool)
       .then(transactionWrapper.beginTransaction)
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "INSERT into comments set ?";
+          const sql = "INSERT INTO comments SET ?";
           context.conn.query(sql, writeData, (err, rows) => {
             if (err) {
               context.error = err;
@@ -33,14 +29,10 @@ exports.write = (writeData) => {
               resolve(context);
             }
           });
-
         })
-
       })
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
           const sql = "UPDATE doodle SET comment_count = comment_count+1 WHERE idx = ?";
           context.conn.query(sql, writeData.doodle_idx, (err, rows) => {
             if (err) {
@@ -50,20 +42,13 @@ exports.write = (writeData) => {
               resolve(context);
             }
           });
-
         })
-
       })
       .then(transactionWrapper.commitTransaction)
-
       .then((context) => {
-
         context.conn.release();
-
         resolve(context.result);
-
       })
-
       .catch((context) => {
 
         context.conn.rollback(() => {
@@ -80,8 +65,13 @@ exports.write = (writeData) => {
 
 exports.read = (doodle_idx) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT comments.*, users.nickname FROM comments left join users on" +
-      " comments.user_idx = users.idx WHERE comments.doodle_idx = ?";
+    const sql =
+      "SELECT " +
+      "  comments.*, " +
+      "  users.nickname " +
+      "FROM comments " +
+      "  LEFT JOIN users ON comments.user_idx = users.idx " +
+      "WHERE comments.doodle_idx = ?";
     pool.query(sql, doodle_idx, (err, rows) => {
       if (err) {
         reject(err);

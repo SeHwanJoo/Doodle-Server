@@ -1,9 +1,5 @@
 'use strict';
 
-const nodemailer = require('nodemailer');
-const config = require('../config/config');
-const resMsg = require('../errors.json');
-
 const likeModel = require('../models/LikeModel');
 
 

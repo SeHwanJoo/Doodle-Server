@@ -10,6 +10,7 @@ const likeCtrl = require('../controllers/LikeCtrl');
 const imageCtrl = require('../controllers/ImageCtrl');
 
 
+
 module.exports = (router) => {
 
 
@@ -23,8 +24,12 @@ module.exports = (router) => {
     .post(userCtrl.login);
 
   router.route('/users')
+    .get(authCtrl.auth, userCtrl.profile)
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
+
+
+
   router.route('/users/find/id')
     .post(userCtrl.findID);
   router.route('/users/find/pw')
@@ -35,25 +40,29 @@ module.exports = (router) => {
     .post(userCtrl.editPW);
 
   router.route('/doodle/all')
-    .post(doodleCtrl.allDoodle);
+    .post(authCtrl.auth ,doodleCtrl.allDoodle);
 
 
-  router.route('/users/:idx')
-    .get(userCtrl.profile);
+  router.route('/search/users/:keyword')
+    .get(userCtrl.search);
+  router.route('/search/doodle/:keyword')
+    .get(doodleCtrl.search);
+
+
 
   //댓글
-  router.route('/comment/write')
-    .post(authCtrl.auth, commentCtrl.write);
-  router.route('/comment/read/:doodle_idx')
-    .get(authCtrl.auth, commentCtrl.read);
+  router.route('/comments')
+    .post(commentCtrl.write);
+  router.route('/comments/:idx')
+    .get(commentCtrl.read);
 
   //scrap
   router.route('/scrap/scrap')
-    .post(authCtrl.auth, scrapCtrl.scrap);
+    .post(scrapCtrl.scrap);
 
   //like
   router.route('/like/like')
-    .post(authCtrl.auth, likeCtrl.like);
+    .post(likeCtrl.like);
 
 
   return router;

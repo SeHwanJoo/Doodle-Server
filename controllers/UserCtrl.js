@@ -21,6 +21,7 @@ exports.register = async (req, res, next) => {
   }
 
 
+
   //TODO s3 dest 설정
   let image;
   if (!req.file) { // 이미지가 없는 경우
@@ -108,7 +109,7 @@ exports.login = async (req, res, next) => {
 exports.profile = async (req, res, next) => {
   let result = '';
   try {
-    const userData = req.params.idx;
+    const userData = req.userIdx;
 
     result = await userModel.profile(userData)
 
@@ -300,6 +301,23 @@ exports.editPW = async (req, res, next) => {
 
   } catch (error) {
     console.log(error);
+    return next(error);
+  }
+
+  return res.r(result);
+};
+
+
+
+exports.search = async(req, res, next) => {
+  let result;
+
+  try{
+    const data = req.params.keyword;
+
+    result = await userModel.search(data);
+
+  } catch (error){
     return next(error);
   }
 

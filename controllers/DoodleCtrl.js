@@ -10,6 +10,7 @@ const scrapModel = require('../models/ScrapModel');
 
 /*******************
  *  request doodle
+ *  TODO body.user_idx -> req.userIdx
  ********************/
 exports.allDoodle = async (req, res, next) => {
 
@@ -35,10 +36,7 @@ exports.allDoodle = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
-
-  // FIXME 리턴값 수정하기
-  // return res.status(200).json(result);
-  res.r(result);
+  return res.r(result);
 };
 
 
@@ -292,37 +290,27 @@ exports.confirmPW = async (req, res, next) => {
   }
 
   return res.r(result);
+  // FIXME 리턴값 수정하기
+  // return res.status(200).json(result);
+
 };
 
 
 /*********
- * 비밀번호 변경
+ * 글귀 검색
  * @param req
  * @param res
  * @param next
  * @returns {Promise.<*>}
  */
+exports.search = async(req, res, next) => {
+  let result = '';
 
-exports.editPW = async (req, res, next) => {
+  try{
+    const data = req.params.keyword;
 
-  let result;
-  let pw;
-  if (req.body.pw1 !== req.body.pw2) {
-    return res.status(400).json(resMsg[1404])
-  } else {
-    pw = req.body.pw1
-  }
-
-  try {
-    const data = {
-      pw: config.do_cipher(pw),
-      id: req.body.id,
-      email: req.body.email
-    };
-    result = await userModel.editPW(data);
-
-  } catch (error) {
-    console.log(error);
+    result = await doodleModel.search(data);
+  }catch (error){
     return next(error);
   }
 

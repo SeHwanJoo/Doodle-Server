@@ -9,6 +9,7 @@ const commentModel = require('../models/CommentModel');
 
 /*******************
  *  Register
+ *  TODO body.user_idx -> req.userIdx
  ********************/
 exports.write = async (req, res, next) => {
 
@@ -33,13 +34,13 @@ exports.write = async (req, res, next) => {
 
 exports.read = async (req, res, next) => {
 
-  if (!req.params.doodle_idx) {
+  if (!req.params.idx) {
     return res.status(400).end();
   }
   let result = '';
 
   try {
-    result = await commentModel.read(parseInt(req.params.doodle_idx));
+    result = await commentModel.read(parseInt(req.params.idx));
   } catch (error) {
     return next(error);
   }

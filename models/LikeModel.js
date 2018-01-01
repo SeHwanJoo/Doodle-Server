@@ -6,11 +6,9 @@ const pool = mysql.createPool(DBConfig);
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
-const moment_timezone = require('moment-timezone');
+
 moment.tz.setDefault('Asia/Seoul');
 
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
 
 /*******************
  *  allDoodl
@@ -21,10 +19,8 @@ exports.like = (likeData) => {
     transactionWrapper.getConnection(pool)
       .then(transactionWrapper.beginTransaction)
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "INSERT into `like` set ?";
+          const sql = "INSERT INTO `like` SET ?";
           context.conn.query(sql, likeData, (err, rows) => {
             if (err) {
               context.error = err;
@@ -33,15 +29,14 @@ exports.like = (likeData) => {
               resolve(context);
             }
           });
-
         })
-
       })
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "UPDATE doodle SET like_count = like_count+1 WHERE idx = ?";
+          const sql =
+            "UPDATE doodle " +
+            "SET like_count = like_count+1 " + "" +
+            "WHERE idx = ? ";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
@@ -50,15 +45,12 @@ exports.like = (likeData) => {
               resolve(context);
             }
           });
-
         })
-
       })
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+          const sql =
+            "SELECT like_count FROM doodle WHERE idx = ?";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
@@ -66,34 +58,22 @@ exports.like = (likeData) => {
             } else {
               context.result = {
                 count: rows[0].like_count
-              }
+              };
               resolve(context);
             }
           });
-
         })
-
       })
       .then(transactionWrapper.commitTransaction)
-
       .then((context) => {
-
         context.conn.release();
-
         resolve(context.result);
-
       })
-
       .catch((context) => {
-
         context.conn.rollback(() => {
-
           context.conn.release();
-
           reject(context.error);
-
         })
-
       })
   });
 };
@@ -103,9 +83,7 @@ exports.unlike = (likeData) => {
     transactionWrapper.getConnection(pool)
       .then(transactionWrapper.beginTransaction)
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
           const sql = "DELETE FROM `like` WHERE doodle_idx = ? && user_idx = ?";
           context.conn.query(sql, [likeData.doodle_idx, likeData.user_idx], (err, rows) => {
             if (err) {
@@ -120,15 +98,14 @@ exports.unlike = (likeData) => {
               }
             }
           });
-
         })
-
       })
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "UPDATE doodle SET like_count = like_count-1 WHERE idx = ?";
+          const sql =
+            "UPDATE doodle " +
+            "SET like_count = like_count-1 " +
+            "WHERE idx = ? ";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
@@ -137,15 +114,14 @@ exports.unlike = (likeData) => {
               resolve(context);
             }
           });
-
         })
-
       })
       .then((context) => {
-
         return new Promise((resolve, reject) => {
-
-          const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+          const sql =
+            "SELECT like_count " +
+            "FROM doodle " +
+            "WHERE idx = ? ";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
@@ -153,34 +129,22 @@ exports.unlike = (likeData) => {
             } else {
               context.result = {
                 count: rows[0].like_count
-              }
+              };
               resolve(context);
             }
           });
-
         })
-
       })
       .then(transactionWrapper.commitTransaction)
-
       .then((context) => {
-
         context.conn.release();
-
         resolve(context.result);
-
       })
-
       .catch((context) => {
-
         context.conn.rollback(() => {
-
           context.conn.release();
-
           reject(context.error);
-
         })
-
       })
   });
 };
