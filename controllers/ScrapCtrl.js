@@ -16,12 +16,18 @@ exports.scrap = async(req, res, next) => {
     let result = '';
     try {
         const scrapData = {
-            user_idx: req.body.user_idx,
-            doodle_idx: req.body.doodle_idx,
+            user_idx: parseInt(req.body.user_idx),
+            doodle_idx: parseInt(req.body.doodle_idx)
 
         };
+        if (req.body.scrap === 'scrap') {
+            result = await scrapModel.scrap(scrapData);
+        } else if (req.body.scrap === 'unscrap') {
+            result = await scrapModel.unscrap(scrapData);
+        } else{
+            return res.status(400).end();
+        }
 
-        result = await scrapModel.scrap(scrapData);
 
     } catch (error) {
         console.log(error);

@@ -5,6 +5,7 @@ const userCtrl = require('../controllers/UserCtrl');
 const doodleCtrl = require('../controllers/DoodleCtrl');
 const commentCtrl = require('../controllers/CommentCtrl');
 const scrapCtrl = require('../controllers/ScrapCtrl');
+const likeCtrl = require('../controllers/LikeCtrl');
 
 const imageCtrl = require('../controllers/ImageCtrl');
 
@@ -15,9 +16,9 @@ module.exports = (router) => {
 
 
 
-  // USER
-  router.route('/users/register')
-    .post(imageCtrl.uploadSingle, userCtrl.register);
+    // USER
+    router.route('/users/register')
+        .post(imageCtrl.uploadSingle, userCtrl.register);
 
 
     router.route('/users/login')
@@ -35,8 +36,8 @@ module.exports = (router) => {
     router.route('/users/edit/pw')
         .post(userCtrl.editPW);
 
-    router.route('/doodle/all/:flag')
-        .get(doodleCtrl.allDoodle);
+    router.route('/doodle/all')
+        .post(doodleCtrl.allDoodle);
 
 
     //댓글
@@ -48,8 +49,10 @@ module.exports = (router) => {
     //scrap
     router.route('/scrap/scrap')
         .post(scrapCtrl.scrap);
-    router.route('/scrap/read/:user_idx')
-        .get(scrapCtrl.read);
+
+    //like
+    router.route('/like/like')
+        .post(likeCtrl.like);
 
 
     return router;

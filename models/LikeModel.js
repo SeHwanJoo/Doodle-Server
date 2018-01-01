@@ -14,9 +14,9 @@ const config = require('../config/config');
 
 /*******************
  *  allDoodl
- *  @body: scrapData = {doodle_idx,user_idx}
+ *  @body: likeData = {doodle_idx,user_idx}
  ********************/
-exports.scrap = (scrapData) => {
+exports.like = (likeData) => {
     return new Promise((resolve, reject) => {
         transactionWrapper.getConnection(pool)
             .then(transactionWrapper.beginTransaction)
@@ -24,8 +24,8 @@ exports.scrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "INSERT into scraps set ?";
-                    context.conn.query(sql, scrapData, (err, rows) => {
+                    const sql = "INSERT into `like` set ?";
+                    context.conn.query(sql, likeData, (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
@@ -41,8 +41,8 @@ exports.scrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE doodle SET scrap_count = scrap_count+1 WHERE idx = ?";
-                    context.conn.query(sql, scrapData.doodle_idx, (err, rows) => {
+                    const sql = "UPDATE doodle SET like_count = like_count+1 WHERE idx = ?";
+                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
@@ -58,33 +58,14 @@ exports.scrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE users SET scrap_count = scrap_count+1 WHERE idx = ?";
-                    context.conn.query(sql, scrapData.user_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            resolve(context);
-                        }
-                    });
-
-                })
-
-            })
-            .then((context) => {
-
-                return new Promise((resolve, reject) => {
-
-                    const sql = "SELECT scrap_count FROM doodle WHERE idx = ? UNION" +
-                                " SELECT scrap_count FROM users WHERE idx = ?";
-                    context.conn.query(sql, [scrapData.doodle_idx,scrapData.user_idx], (err, rows) => {
+                    const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
                         } else {
                             context.result = {
-                                count: rows[0].scrap_count,
-                                user_count: rows[1].scrap_count
+                                count: rows[0].like_count
                             }
                             resolve(context);
                         }
@@ -117,7 +98,7 @@ exports.scrap = (scrapData) => {
     });
 };
 
-exports.unscrap = (scrapData) => {
+exports.unlike = (likeData) => {
     return new Promise((resolve, reject) => {
         transactionWrapper.getConnection(pool)
             .then(transactionWrapper.beginTransaction)
@@ -125,18 +106,18 @@ exports.unscrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "DELETE FROM scraps WHERE doodle_idx = ? && user_idx = ?";
-                    context.conn.query(sql, [scrapData.doodle_idx, scrapData.user_idx], (err, rows) => {
+                    const sql = "DELETE FROM `like` WHERE doodle_idx = ? && user_idx = ?";
+                    context.conn.query(sql, [likeData.doodle_idx, likeData.user_idx], (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
                         } else {
-                            console.log(rows);
-                            if(rows.affectedRows === 0){
-                                context.error = 'twice unscrap';
+                            if (rows.affectedRows === 0) {
+                                context.error = 'twice unlike';
                                 reject(context);
+                            } else {
+                                resolve(context);
                             }
-                            resolve(context);
                         }
                     });
 
@@ -147,8 +128,8 @@ exports.unscrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE doodle SET scrap_count = scrap_count-1 WHERE idx = ?";
-                    context.conn.query(sql, scrapData.doodle_idx, (err, rows) => {
+                    const sql = "UPDATE doodle SET like_count = like_count-1 WHERE idx = ?";
+                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
@@ -164,37 +145,19 @@ exports.unscrap = (scrapData) => {
 
                 return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE users SET scrap_count = scrap_count-1 WHERE idx = ?";
-                    context.conn.query(sql, scrapData.user_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            resolve(context);
-                        }
-                    });
-
-                })
-
-            })
-            .then((context) => {
-
-                return new Promise((resolve, reject) => {
-
-                    const sql = "SELECT scrap_count FROM doodle WHERE idx = ? UNION" +
-                                " SELECT scrap_count FROM users WHERE idx = ?";
-                    context.conn.query(sql, [scrapData.doodle_idx,scrapData.user_idx], (err, rows) => {
+                    const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
                         if (err) {
                             context.error = err;
                             reject(context);
                         } else {
                             context.result = {
-                                count: rows[0].scrap_count,
-                                user_count: rows[1].scrap_count
+                                count: rows[0].like_count
                             }
                             resolve(context);
                         }
                     });
+
                 })
 
             })
@@ -222,19 +185,18 @@ exports.unscrap = (scrapData) => {
     });
 };
 
-exports.read = (doodleData) => {
-    return new Promise((resolve, reject) => {
-        const sql = "SELECT users.nickname, doodle.*, scraps.doodle_idx AS scraps, `like`.doodle_idx AS `like` FROM scraps" +
-        " left join doodle on doodle.idx = scraps.doodle_idx" +
-        " left join users on doodle.user_idx = users.idx" + 
-        " left join `like` on doodle.idx = `like`.doodle_idx && `like`.user_idx = ?" +
-        " WHERE scraps.user_idx = ?";
-        pool.query(sql, [doodleData.user_idx,doodleData.user_idx,doodleData.user_idx], (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
-};
+// exports.read = (user_idx) => {
+//     return new Promise((resolve, reject) => {
+//         const sql = "SELECT scraps.*, users.nickname, doodle.*,  FROM scraps" +
+//         " left join doodle on doodle.idx = scraps.doodle_idx" +
+//         " left join users on doodle.user_idx = users.idx" +
+//         " left join WHERE scraps.user_idx = ?";
+//         pool.query(sql, user_idx, (err, rows) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 resolve(rows);
+//             }
+//         });
+//     });
+// };

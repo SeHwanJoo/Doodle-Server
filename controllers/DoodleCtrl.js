@@ -5,21 +5,35 @@ const config = require('../config/config');
 const resMsg = require('../errors.json');
 
 const doodleModel = require('../models/DoodleModel');
+const scrapModel = require('../models/ScrapModel');
 
 
 
 /*******************
- *  Register
+ *  request doodle
  ********************/
 exports.allDoodle = async(req, res, next) => {
 
-    if (!req.params.flag) {
+    if (!req.body.flag) {
         return res.status(400).end();
     }
     let result = '';
+    let flag = parseInt(req.body.flag);
+    console.log(flag);
+
+    const doodleData = {
+        flag: flag,
+        user_idx: req.body.user_idx
+    }
 
     try {
-        result = await doodleModel.allDoodle(parseInt(req.params.flag));
+        if(flag === 3){
+            result = await doodleModel.myDoodle(doodleData);
+        } else if(flag === 4){
+            result = await scrapModel.read(doodleData);
+        } else {
+            result = await doodleModel.allDoodle(doodleData);
+        }
     } catch (error) {
         return next(error);
     }
