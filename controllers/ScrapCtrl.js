@@ -7,50 +7,49 @@ const resMsg = require('../errors.json');
 const scrapModel = require('../models/ScrapModel');
 
 
-
 /*******************
  *  Scrap
  ********************/
-exports.scrap = async(req, res, next) => {
+exports.scrap = async (req, res, next) => {
 
-    let result = '';
-    try {
-        const scrapData = {
-            user_idx: parseInt(req.body.user_idx),
-            doodle_idx: parseInt(req.body.doodle_idx)
+  let result = '';
+  try {
+    const scrapData = {
+      user_idx: parseInt(req.body.user_idx),
+      doodle_idx: parseInt(req.body.doodle_idx)
 
-        };
-        if (req.body.scrap === 'scrap') {
-            result = await scrapModel.scrap(scrapData);
-        } else if (req.body.scrap === 'unscrap') {
-            result = await scrapModel.unscrap(scrapData);
-        } else{
-            return res.status(400).end();
-        }
-
-
-    } catch (error) {
-        console.log(error);
-        return next(error)
+    };
+    if (req.body.scrap === 'scrap') {
+      result = await scrapModel.scrap(scrapData);
+    } else if (req.body.scrap === 'unscrap') {
+      result = await scrapModel.unscrap(scrapData);
+    } else {
+      return res.status(400).end();
     }
 
-    return res.r(result);
+
+  } catch (error) {
+    console.log(error);
+    return next(error)
+  }
+
+  return res.r(result);
 };
 
-exports.read = async(req, res, next) => {
+exports.read = async (req, res, next) => {
 
-    if (!req.params.user_idx) {
-        return res.status(400).end();
-    }
-    let result = '';
+  if (!req.params.user_idx) {
+    return res.status(400).end();
+  }
+  let result = '';
 
-    try {
-        result = await scrapModel.read(parseInt(req.params.user_idx));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    result = await scrapModel.read(parseInt(req.params.user_idx));
+  } catch (error) {
+    return next(error);
+  }
 
-    // FIXME 리턴값 수정하기
-    // return res.status(200).json(result);
-    res.r(result);
+  // FIXME 리턴값 수정하기
+  // return res.status(200).json(result);
+  res.r(result);
 };

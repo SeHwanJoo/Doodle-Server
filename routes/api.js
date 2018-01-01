@@ -15,47 +15,53 @@ module.exports = (router) => {
 
 
 
-    // USER
-    router.route('/users/register')
-        .post(imageCtrl.uploadSingle, userCtrl.register);
+  // USER
+  router.route('/users/register')
+    .post(imageCtrl.uploadSingle, userCtrl.register);
 
 
-    router.route('/users/login')
-        .post(userCtrl.login);
+  router.route('/users/login')
+    .post(userCtrl.login);
 
-    router.route('/users')
-        .put(authCtrl.auth, userCtrl.edit)
-        .delete(authCtrl.auth, userCtrl.delUser);
-    router.route('/users/find/id')
-        .post(userCtrl.findID);
-    router.route('/users/find/pw')
-        .post(userCtrl.findPW);
-    router.route('/users/confirm/pw')
-        .post(userCtrl.confirmPW);
-    router.route('/users/edit/pw')
-        .post(userCtrl.editPW);
+  router.route('/users')
+    .get(userCtrl.profile)
+    .put(authCtrl.auth, userCtrl.edit)
+    .delete(authCtrl.auth, userCtrl.delUser);
 
-    router.route('/doodle/all')
-        .post(doodleCtrl.allDoodle);
+  router.route('/users/search/:keyword')
+    .get(userCtrl.search);
 
+  router.route('/users/find/id')
+    .post(userCtrl.findID);
+  router.route('/users/find/pw')
+    .post(userCtrl.findPW);
+  router.route('/users/confirm/pw')
+    .post(userCtrl.confirmPW);
+  router.route('/users/edit/pw')
+    .post(userCtrl.editPW);
 
-    router.route('/users/:idx')
-        .get(userCtrl.profile);
+  router.route('/doodle/all')
+    .post(doodleCtrl.allDoodle);
 
-    //댓글
-    router.route('/comment/write')
-        .post(commentCtrl.write);
-    router.route('/comment/read/:doodle_idx')
-        .get(commentCtrl.read);
-
-    //scrap
-    router.route('/scrap/scrap')
-        .post(scrapCtrl.scrap);
-
-    //like
-    router.route('/like/like')
-        .post(likeCtrl.like);
+  router.route('/doodle/search/:keyword')
+    .get(doodleCtrl.search);
 
 
-    return router;
+
+  //댓글
+  router.route('/comment/write')
+    .post(commentCtrl.write);
+  router.route('/comment/read/:doodle_idx')
+    .get(commentCtrl.read);
+
+  //scrap
+  router.route('/scrap/scrap')
+    .post(scrapCtrl.scrap);
+
+  //like
+  router.route('/like/like')
+    .post(likeCtrl.like);
+
+
+  return router;
 };

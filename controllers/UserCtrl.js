@@ -310,3 +310,20 @@ exports.editPW = async(req, res, next) => {
 
   return res.r(result);
 };
+
+
+
+exports.search = async(req, res, next) => {
+  let result;
+
+  try{
+    const data = req.params.keyword;
+
+    result = await userModel.search(data);
+
+  } catch (error){
+    return next(error);
+  }
+
+  return res.r(result);
+};
