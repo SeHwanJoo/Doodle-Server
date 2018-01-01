@@ -360,3 +360,30 @@ exports.editPW = (data) => {
     });
   });
 };
+
+
+/*********
+ * 필명 검색
+ * @param data
+ * @returns {Promise}
+ */
+exports.search = (data) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      `
+      SELECT 
+        nickname, 
+        description
+      FROM users
+      WHERE nickname REGEXP ?
+      `;
+
+    pool.query(sql, data, (err, rows) => {
+      if(err){
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
