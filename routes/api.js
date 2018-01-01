@@ -17,6 +17,11 @@ module.exports = (router) => {
   router.route('/users')
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
+
+
+  router.route('/users/:idx')
+    .get(userCtrl.profile);
+
   router.route('/users/find/id')
     .post(userCtrl.findID);
   router.route('/users/find/pw')
@@ -25,6 +30,7 @@ module.exports = (router) => {
     .post(userCtrl.confirmPW);
   router.route('/users/edit/pw')
     .post(userCtrl.editPW);
+
 
 
   return router;
