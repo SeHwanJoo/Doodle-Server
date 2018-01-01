@@ -9,11 +9,11 @@ exports.auth = (req, res, next) => {
   if (!req.headers.token) {
     return next(401);
   } else {
-    authModel.auth(req.headers.token, (err, user_idx) => {
+    authModel.auth(req.headers.token, (err, userIdx) => {
       if (err) {
         return next(err);
       } else {
-        req.user_idx = user_idx;
+        req.userIdx = userIdx;
         return next();
       }
     });

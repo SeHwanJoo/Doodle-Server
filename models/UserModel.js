@@ -121,7 +121,7 @@ exports.login = (userData) => {
             reject(1403);
           } else {
             const profile = {
-              id: rows[0].email,
+              email: rows[0].email,
               nickname: rows[0].nickname
             };
             const token = jwt.sign(profile, config.jwt.cert, {'expiresIn': "10h"});
@@ -142,9 +142,17 @@ exports.login = (userData) => {
 exports.profile = (userData) => {
   return new Promise((resolve, reject) =>{
     const sql =
-      "SELECT idx, email, user_nickname, created " +
-      "FROM users " +
-      "WHERE idx = ?";
+      `
+      SELECT
+        u.idx,
+        u.nickname,
+        u.description,
+        SUM(d.like_count)    AS like_count,
+        SUM(d.comment_count) AS comment_count
+      FROM users AS u
+        LEFT JOIN doodle AS d ON u.idx = d.user_idx
+      WHERE u.idx = ?
+      `;
 
     pool.query(sql, userData, (err, rows) => {
       if (err) {
