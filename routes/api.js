@@ -15,7 +15,6 @@ module.exports = (router) => {
 
 
 
-
     // USER
     router.route('/users/register')
         .post(imageCtrl.uploadSingle, userCtrl.register);
@@ -39,6 +38,9 @@ module.exports = (router) => {
     router.route('/doodle/all')
         .post(doodleCtrl.allDoodle);
 
+
+    router.route('/users/:idx')
+        .get(userCtrl.profile);
 
     //댓글
     router.route('/comment/write')
