@@ -17,172 +17,172 @@ const config = require('../config/config');
  *  @body: likeData = {doodle_idx,user_idx}
  ********************/
 exports.like = (likeData) => {
-    return new Promise((resolve, reject) => {
-        transactionWrapper.getConnection(pool)
-            .then(transactionWrapper.beginTransaction)
-            .then((context) => {
+  return new Promise((resolve, reject) => {
+    transactionWrapper.getConnection(pool)
+      .then(transactionWrapper.beginTransaction)
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "INSERT into `like` set ?";
-                    context.conn.query(sql, likeData, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            resolve(context);
-                        }
-                    });
+          const sql = "INSERT into `like` set ?";
+          context.conn.query(sql, likeData, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
 
-                })
+        })
 
-            })
-            .then((context) => {
+      })
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE doodle SET like_count = like_count+1 WHERE idx = ?";
-                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            resolve(context);
-                        }
-                    });
+          const sql = "UPDATE doodle SET like_count = like_count+1 WHERE idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
 
-                })
+        })
 
-            })
-            .then((context) => {
+      })
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "SELECT like_count FROM doodle WHERE idx = ?";
-                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            context.result = {
-                                count: rows[0].like_count
-                            }
-                            resolve(context);
-                        }
-                    });
+          const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.result = {
+                count: rows[0].like_count
+              }
+              resolve(context);
+            }
+          });
 
-                })
+        })
 
-            })
-            .then(transactionWrapper.commitTransaction)
+      })
+      .then(transactionWrapper.commitTransaction)
 
-            .then((context) => {
+      .then((context) => {
 
-                context.conn.release();
+        context.conn.release();
 
-                resolve(context.result);
+        resolve(context.result);
 
-            })
+      })
 
-            .catch((context) => {
+      .catch((context) => {
 
-                context.conn.rollback(() => {
+        context.conn.rollback(() => {
 
-                    context.conn.release();
+          context.conn.release();
 
-                    reject(context.error);
+          reject(context.error);
 
-                })
+        })
 
-            })
-    });
+      })
+  });
 };
 
 exports.unlike = (likeData) => {
-    return new Promise((resolve, reject) => {
-        transactionWrapper.getConnection(pool)
-            .then(transactionWrapper.beginTransaction)
-            .then((context) => {
+  return new Promise((resolve, reject) => {
+    transactionWrapper.getConnection(pool)
+      .then(transactionWrapper.beginTransaction)
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "DELETE FROM `like` WHERE doodle_idx = ? && user_idx = ?";
-                    context.conn.query(sql, [likeData.doodle_idx, likeData.user_idx], (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            if (rows.affectedRows === 0) {
-                                context.error = 'twice unlike';
-                                reject(context);
-                            } else {
-                                resolve(context);
-                            }
-                        }
-                    });
+          const sql = "DELETE FROM `like` WHERE doodle_idx = ? && user_idx = ?";
+          context.conn.query(sql, [likeData.doodle_idx, likeData.user_idx], (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              if (rows.affectedRows === 0) {
+                context.error = 'twice unlike';
+                reject(context);
+              } else {
+                resolve(context);
+              }
+            }
+          });
 
-                })
+        })
 
-            })
-            .then((context) => {
+      })
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "UPDATE doodle SET like_count = like_count-1 WHERE idx = ?";
-                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            resolve(context);
-                        }
-                    });
+          const sql = "UPDATE doodle SET like_count = like_count-1 WHERE idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
 
-                })
+        })
 
-            })
-            .then((context) => {
+      })
+      .then((context) => {
 
-                return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-                    const sql = "SELECT like_count FROM doodle WHERE idx = ?";
-                    context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
-                        if (err) {
-                            context.error = err;
-                            reject(context);
-                        } else {
-                            context.result = {
-                                count: rows[0].like_count
-                            }
-                            resolve(context);
-                        }
-                    });
+          const sql = "SELECT like_count FROM doodle WHERE idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.result = {
+                count: rows[0].like_count
+              }
+              resolve(context);
+            }
+          });
 
-                })
+        })
 
-            })
-            .then(transactionWrapper.commitTransaction)
+      })
+      .then(transactionWrapper.commitTransaction)
 
-            .then((context) => {
+      .then((context) => {
 
-                context.conn.release();
+        context.conn.release();
 
-                resolve(context.result);
+        resolve(context.result);
 
-            })
+      })
 
-            .catch((context) => {
+      .catch((context) => {
 
-                context.conn.rollback(() => {
+        context.conn.rollback(() => {
 
-                    context.conn.release();
+          context.conn.release();
 
-                    reject(context.error);
+          reject(context.error);
 
-                })
+        })
 
-            })
-    });
+      })
+  });
 };
 
 // exports.read = (user_idx) => {

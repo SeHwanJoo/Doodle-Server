@@ -21,7 +21,7 @@ exports.register = (userData) => {
         } else {
           if (rows.length !== 0) {  // 이미 아이디 존재
             reject(1401);
-          }else{
+          } else {
             resolve(null);
           }
         }
@@ -67,18 +67,17 @@ exports.register = (userData) => {
 };
 
 
-
 exports.check = (userData) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT email FROM users WHERE email =?';
 
     pool.query(sql, userData, (err, rows) => {
-      if (err){
+      if (err) {
         reject(err);
       } else {
-        if (rows.length !==0) {
+        if (rows.length !== 0) {
           reject(1401)
-        } else{
+        } else {
           resolve(rows);
         }
       }
@@ -140,7 +139,7 @@ exports.login = (userData) => {
 
 
 exports.profile = (userData) => {
-  return new Promise((resolve, reject) =>{
+  return new Promise((resolve, reject) => {
     const sql =
       `
       SELECT
@@ -169,36 +168,36 @@ exports.profile = (userData) => {
  *  @param editData = {user_idx, content}}
  ********************/
 exports.edit = (editData) => {
- return new Promise((resolve, reject) => {
-    const sql = "UPDATE users SET nickname=? WHERE idx=?";
+  return new Promise((resolve, reject) => {
+      const sql = "UPDATE users SET nickname=? WHERE idx=?";
 
-     pool.query(sql, [editData.nickname, editData.idx], (err, rows) => {
-       if (err) {
-         reject(err);
-       } else {
-         if (rows.affectedRows === 1) {
-           resolve(editData.user_idx);
-         } else {
-           const _err = new Error("User Edit error");
-           reject(_err);
-         }
-       }
-     });
-   }
- ).then((data) => {
-     return new Promise((resolve, reject) => {
-       const sql = "SELECT * FROM users WHERE idx=?";
+      pool.query(sql, [editData.nickname, editData.idx], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (rows.affectedRows === 1) {
+            resolve(editData.user_idx);
+          } else {
+            const _err = new Error("User Edit error");
+            reject(_err);
+          }
+        }
+      });
+    }
+  ).then((data) => {
+      return new Promise((resolve, reject) => {
+        const sql = "SELECT * FROM users WHERE idx=?";
 
-       pool.query(sql, data, (err, rows) => {
-         if (err) {
-           reject(err);
-         } else {
-           resolve(rows);
-         }
-       });
-     });
-   }
- );
+        pool.query(sql, data, (err, rows) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+    }
+  );
 };
 
 /*******************
@@ -206,7 +205,7 @@ exports.edit = (editData) => {
  *  @param data = user_idx
  ********************/
 exports.delUser = (data) => {
-  return new Promise((resolve, reject) =>{
+  return new Promise((resolve, reject) => {
     const sql = "DELETE FROM users WHERE idx=?";
 
     pool.query(sql, data, (err, rows) => {
@@ -239,14 +238,14 @@ exports.findID = (data) => {
       WHERE nickname = ? AND email = ?
       `;
     pool.query(sql, [data.name, data.email], (err, rows) => {
-      if (err){
+      if (err) {
         reject(err)
       } else {
-          if(rows.length ===0){
-            reject(1402)
-          } else{
-            resolve(rows)
-          }
+        if (rows.length === 0) {
+          reject(1402)
+        } else {
+          resolve(rows)
+        }
       }
     });
   });
@@ -268,7 +267,7 @@ exports.findPW = (data) => {
       WHERE user_id = ? AND user_email = ?
       `;
     pool.query(sql, [data.id, data.email], (err, rows) => {
-      if (err){
+      if (err) {
         reject(err);
       } else {
         if (rows.length === 0) { // 일치하는 값이 없는 경우
@@ -287,7 +286,7 @@ exports.findPW = (data) => {
         WHERE user_email = ?
         `;
       pool.query(sql, [data.secretNum, result], (err, rows) => {
-        if(err){
+        if (err) {
           reject(err)
         } else {
           resolve(result)
@@ -307,10 +306,10 @@ exports.confirmPW = (data) => {
       `;
 
     pool.query(sql, [data.secretNum], (err, rows) => {
-      if(err){
+      if (err) {
         reject(err);
       } else {
-        if(rows.length === 0){ // 인증번호가 다른경우
+        if (rows.length === 0) { // 인증번호가 다른경우
           reject(9401);
         } else {
           resolve(rows[0]);
@@ -319,7 +318,6 @@ exports.confirmPW = (data) => {
     });
   });
 };
-
 
 
 /***********
