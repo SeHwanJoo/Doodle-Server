@@ -19,6 +19,7 @@ module.exports = (router) => {
   router.route('/users/register')
     .post(imageCtrl.uploadSingle, userCtrl.register);
 
+  router.route('/users/duplicates').post(userCtrl.duplicates);
 
   router.route('/users/login')
     .post(userCtrl.login);

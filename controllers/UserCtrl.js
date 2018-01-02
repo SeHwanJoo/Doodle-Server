@@ -53,6 +53,24 @@ exports.register = async (req, res, next) => {
   });
 };
 
+exports.duplicates = async(req, res, next) => {
+  let result = '';
+  try {
+    const userData = {
+      email : req.body.email,
+      nickname : req.body.nickname,
+      flag : req.body.flag
+    };
+    result = await userModel.duplicates(userData);
+  }
+  catch (error) {
+    console.log(error);
+    return next(error);
+  }
+
+  return res.r(result);
+};
+
 
 exports.check = async (req, res, next) => {
   let result = '';
