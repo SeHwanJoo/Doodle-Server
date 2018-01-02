@@ -9,14 +9,16 @@ const scrapModel = require('../models/ScrapModel');
 
 /*******************
  *  Scrap
+ *  @params: {idx}
+ *  @body: {scrap}
  ********************/
 exports.scrap = async (req, res, next) => {
 
   let result = '';
   try {
     const scrapData = {
-      user_idx: parseInt(req.body.user_idx),
-      doodle_idx: parseInt(req.body.doodle_idx)
+      user_idx: req.userIdx,
+      doodle_idx: parseInt(req.params.idx)
 
     };
     if (req.body.scrap === 'scrap') {

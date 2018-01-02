@@ -10,8 +10,8 @@ const scrapModel = require('../models/ScrapModel');
 
 /*******************
  *  request doodle
- *  TODO body.user_idx -> req.userIdx
- ********************/
+ *  @body: {flag}
+  ********************/
 exports.allDoodle = async (req, res, next) => {
 
   if (!req.body.flag) {
@@ -23,7 +23,7 @@ exports.allDoodle = async (req, res, next) => {
 
   const doodleData = {
     flag: flag,
-    user_idx: req.body.user_idx
+    user_idx: req.userIdx
   };
   try {
     if (flag === 3) {

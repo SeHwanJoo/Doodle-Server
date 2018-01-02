@@ -51,18 +51,18 @@ module.exports = (router) => {
 
 
   //댓글
-  router.route('/comments')
-    .post(commentCtrl.write);
   router.route('/comments/:idx')
-    .get(commentCtrl.read);
+    .post(authCtrl.auth, commentCtrl.write);
+  router.route('/comments/:idx')
+    .get(authCtrl.auth, commentCtrl.read);
 
   //scrap
-  router.route('/scrap/scrap')
-    .post(scrapCtrl.scrap);
+  router.route('/scrap/:idx')
+    .post(authCtrl.auth, scrapCtrl.scrap);
 
   //like
-  router.route('/like/like')
-    .post(likeCtrl.like);
+  router.route('/like/:idx')
+    .post(authCtrl.auth, likeCtrl.like);
 
 
   return router;
