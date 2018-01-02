@@ -6,6 +6,7 @@ const doodleCtrl = require('../controllers/DoodleCtrl');
 const commentCtrl = require('../controllers/CommentCtrl');
 const scrapCtrl = require('../controllers/ScrapCtrl');
 const likeCtrl = require('../controllers/LikeCtrl');
+const postCtrl = require('../controllers/PostCtrl');
 
 const imageCtrl = require('../controllers/ImageCtrl');
 
@@ -48,6 +49,10 @@ module.exports = (router) => {
     .get(userCtrl.search);
   router.route('/search/doodle/:keyword')
     .get(doodleCtrl.search);
+
+  //글작성
+  router.route('/doodle/post')
+    .post(authCtrl.auth, postCtrl.post);
 
 
 
