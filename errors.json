@@ -90,11 +90,11 @@
     "description": "Internal Server Error"
   },
   "8400": {
-    "status": false,
+    "status": 400,
     "message": "400 Error"
   },
   "9500": {
-    "status": false,
+    "status": 400,
     "message": "500 Error"
   }
 }
