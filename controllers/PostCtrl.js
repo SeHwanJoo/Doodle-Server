@@ -4,19 +4,23 @@ const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const resMsg = require('../errors.json');
 
-const userModel = require('../models/PostModel');
-
-/*******************
- *  post
- *  @body: {image,text}
- ********************/
+const postModel = require('../models/PostModel');
 
 exports.post = async(req, res, next) => {
+	let text;
+	let user_idx;
 	let result = '';
+
+	let image;
+  	if (!req.file) { // 이미지가 없는 경우
+    	image = null;
+  	} else {
+   	 	image = req.file.location;
+  	}
 	try {
 		const postData = {
-			text : req.body.image,
-			image : req.body.text,
+			text : req.body.text,
+			image : image,
 			user_idx : req.userIdx
 		};
 

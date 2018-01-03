@@ -66,6 +66,47 @@ exports.register = (userData) => {
   });
 };
 
+exports.duplicates = (userData) => {
+  return new Promise((resolve, reject) => {
+    var flag = userData.flag;
+    if (flag == 1) {
+      var nickname = userData.nickname;
+      const sql = "select nickname from user where nickname = ?";
+      pool.query(sql, nickname, (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          if (rows.length == 0) { //중복된 필명 없음
+            resolve(rows);
+          }
+          else {
+            reject(1401);
+          }
+        }
+      });
+    }
+    else {
+      var email = userData.email;
+      const sql = "select email from user where email = ?";
+      pool.query(sql, email, (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          if (rows.length == 0) {
+            resolve(rows);
+          }
+          else {
+            reject(1401);
+          }
+        }
+      });
+    }
+
+  });
+};
+
 
 exports.check = (userData) => {
   return new Promise((resolve, reject) => {
