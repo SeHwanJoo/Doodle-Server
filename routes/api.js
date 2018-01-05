@@ -52,7 +52,7 @@ module.exports = (router) => {
 
   //글작성
   router.route('/doodle/post')
-    .post(authCtrl.auth, postCtrl.post);
+    .post(authCtrl.auth, imageCtrl.uploadSingle, postCtrl.post);
 
 
 

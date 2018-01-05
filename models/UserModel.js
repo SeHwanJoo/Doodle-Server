@@ -70,6 +70,9 @@ exports.duplicates = (userData) => {
   return new Promise((resolve, reject) => {
     var flag = userData.flag;
     if (flag == 1) {
+      if (!userData.nickname) {
+        reject(400);
+      }
       var nickname = userData.nickname;
       const sql = "select nickname from user where nickname = ?";
       pool.query(sql, nickname, (err, rows) => {
@@ -77,16 +80,19 @@ exports.duplicates = (userData) => {
           reject(err);
         }
         else {
-          if (rows.length == 0) { //중복된 필명 없음
+          if (rows.length === 0) { //중복된 필명 없음
             resolve(rows);
           }
           else {
-            reject(1401);
+            reject(1400);
           }
         }
       });
     }
-    else {
+    else if (flag == 2) {
+      if (!userData.email) {
+        reject(400);
+      }
       var email = userData.email;
       const sql = "select email from user where email = ?";
       pool.query(sql, email, (err, rows) => {
@@ -94,7 +100,7 @@ exports.duplicates = (userData) => {
           reject(err);
         }
         else {
-          if (rows.length == 0) {
+          if (rows.length === 0) {
             resolve(rows);
           }
           else {
