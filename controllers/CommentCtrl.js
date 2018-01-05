@@ -8,17 +8,18 @@ const commentModel = require('../models/CommentModel');
 
 
 /*******************
- *  Register
- *  TODO body.user_idx -> req.userIdx
+ *  Commment write
+ *  @body: {content}
+ *  @params: {idx}
  ********************/
 exports.write = async (req, res, next) => {
 
   let result = '';
   try {
     const writeData = {
-      user_idx: req.body.user_idx,
+      user_idx: req.userIdx,
       content: req.body.content,
-      doodle_idx: req.body.doodle_idx,
+      doodle_idx: req.params.idx,
 
     };
 
@@ -32,6 +33,12 @@ exports.write = async (req, res, next) => {
   return res.r(result);
 };
 
+
+
+/*******************
+ *  Commment read
+ *  @params: {idx}
+ ********************/
 exports.read = async (req, res, next) => {
 
   if (!req.params.idx) {
@@ -44,8 +51,5 @@ exports.read = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
-
-  // FIXME 리턴값 수정하기
-  // return res.status(200).json(result);
   res.r(result);
 };

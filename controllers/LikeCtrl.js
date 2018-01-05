@@ -4,15 +4,17 @@ const likeModel = require('../models/LikeModel');
 
 
 /*******************
- *  Scrap
+ *  Like
+ *  @body: {like}
+ *  @params: {idx}
  ********************/
 exports.like = async (req, res, next) => {
 
   let result = '';
   try {
     const likeData = {
-      user_idx: req.body.user_idx,
-      doodle_idx: req.body.doodle_idx
+      user_idx: req.userIdx,
+      doodle_idx: req.params.idx
 
     };
     if (req.body.like === 'like') {

@@ -17,19 +17,24 @@ moment.tz.setDefault('Asia/Seoul');
  ********************/
 exports.allDoodle = (doodleData) => {
   return new Promise((resolve, reject) => {
-    const sql =
-      "SELECT " +
+    let sql = "SELECT " +
       "  doodle.*, " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +
       "FROM doodle " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
-      "WHERE doodle.created BETWEEN ? AND ?;";
+      "WHERE doodle.created BETWEEN ? AND ? ";
+    if(doodleData.flag === 2){
+      sql = sql + "ORDER BY doodle.created DESC";
+    } else{
+      sql = sql + "ORDER BY doodle.like_count DESC";
+    }
     const timeArray = [doodleData.user_idx, doodleData.user_idx];
-    if (doodleData.flag === 0) {
+    if (doodleData.flag === -1) {
       timeArray.push(moment().format('YYYY-MM-01 00:00:00'), moment().format('YYYY-MM-DD HH:mm:ss'));
     } else if (doodleData.flag === 1) {
       timeArray.push(moment().startOf('week').format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -55,13 +60,15 @@ exports.myDoodle = (doodleData) => {
       "SELECT " +
       "  doodle.*, " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +
       "FROM doodle " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
-      "WHERE doodle.user_idx = ? ";
+      "WHERE doodle.user_idx = ? " +
+      "ORDER BY doodle.created DESC ";
     const timeArray = [doodleData.user_idx, doodleData.user_idx, doodleData.user_idx];
     pool.query(sql, timeArray, (err, rows) => {
       if (err) {
@@ -72,6 +79,35 @@ exports.myDoodle = (doodleData) => {
     });
   });
 };
+
+//TODO doodle.* 수정
+exports.other = (doodleData) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  doodle.*, " +
+      "  users.nickname, " +
+      "  users.image AS profile, " +
+      "  scraps.doodle_idx AS scraps, " +
+      "  `like`.doodle_idx AS `like` " +
+      "FROM doodle " +
+      "  LEFT JOIN users ON doodle.user_idx = users.idx " +
+      "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
+      "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
+      "WHERE doodle.user_idx = ? " +
+      "ORDER BY doodle.created DESC ";
+    const timeArray = [doodleData.user_idx, doodleData.user_idx, doodleData.idx];
+    pool.query(sql, timeArray, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
+
 
 
 /****************
@@ -88,6 +124,7 @@ exports.search = (data) => {
         image
       FROM doodle
       WHERE doodle.text REGEXP ?
+      ORDER BY doodle.like_count DESC
       `;
     pool.query(sql, data, (err, rows) => {
       if (err) {

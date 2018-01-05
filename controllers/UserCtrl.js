@@ -21,6 +21,8 @@ exports.register = async (req, res, next) => {
   }
 
 
+
+  //TODO s3 dest 설정
   let image;
   if (!req.file) { // 이미지가 없는 경우
     image = null;
@@ -49,6 +51,25 @@ exports.register = async (req, res, next) => {
     "message": "success",
     "result": result[0]
   });
+};
+
+exports.duplicates = async(req, res, next) => {
+  let result = '';
+
+  try {
+    const userData = {
+      email : req.body.email,
+      nickname : req.body.nickname,
+      flag : req.body.flag
+    };
+    result = await userModel.duplicates(userData);
+  }
+  catch (error) {
+    console.log(error);
+    return next(error);
+  }
+
+  return res.r(result);
 };
 
 
@@ -104,12 +125,21 @@ exports.login = async (req, res, next) => {
   return res.r(result);
 };
 
+/******
+ * 닉네임수정
+ * @param idx
+ */
 exports.profile = async (req, res, next) => {
   let result = '';
   try {
-    const userData = req.userIdx;
+    let userData;
+    if(parseInt(req.params.idx) === 0)
+      userData = req.userIdx;
+    else
+      userData = parseInt(req.params.idx);
 
     result = await userModel.profile(userData)
+    console.log(result);
 
   } catch (error) {
     console.log(error);
@@ -306,15 +336,16 @@ exports.editPW = async (req, res, next) => {
 };
 
 
-exports.search = async (req, res, next) => {
+
+exports.search = async(req, res, next) => {
   let result;
 
-  try {
+  try{
     const data = req.params.keyword;
 
     result = await userModel.search(data);
 
-  } catch (error) {
+  } catch (error){
     return next(error);
   }
 

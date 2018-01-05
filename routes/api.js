@@ -6,6 +6,8 @@ const doodleCtrl = require('../controllers/DoodleCtrl');
 const commentCtrl = require('../controllers/CommentCtrl');
 const scrapCtrl = require('../controllers/ScrapCtrl');
 const likeCtrl = require('../controllers/LikeCtrl');
+const postCtrl = require('../controllers/PostCtrl');
+const alarmCtrl = require('../controllers/AlarmCtrl');
 
 const imageCtrl = require('../controllers/ImageCtrl');
 
@@ -19,6 +21,7 @@ module.exports = (router) => {
   router.route('/users/register')
     .post(imageCtrl.uploadSingle, userCtrl.register);
 
+  router.route('/users/duplicates').post(userCtrl.duplicates);
 
   router.route('/users/login')
     .post(userCtrl.login);
@@ -48,21 +51,40 @@ module.exports = (router) => {
   router.route('/search/doodle/:keyword')
     .get(authCtrl.auth, doodleCtrl.search);
 
+  //글작성
+  router.route('/doodle/post')
+    .post(authCtrl.auth, imageCtrl.uploadSingle, postCtrl.post);
+  router.route('/doodle/get')
+    .get(postCtrl.get);
+  router.route('/doodle/other')
+    .post(authCtrl.auth, doodleCtrl.other);
+
 
 
   //댓글
-  router.route('/comments')
-    .post(commentCtrl.write);
   router.route('/comments/:idx')
-    .get(commentCtrl.read);
+    .post(authCtrl.auth, commentCtrl.write);
+  router.route('/comments/:idx')
+    .get(authCtrl.auth, commentCtrl.read);
 
   //scrap
-  router.route('/scrap/scrap')
-    .post(scrapCtrl.scrap);
+  router.route('/scrap/:idx')
+    .post(authCtrl.auth, scrapCtrl.scrap);
 
   //like
-  router.route('/like/like')
-    .post(likeCtrl.like);
+  router.route('/like/:idx')
+    .post(authCtrl.auth, likeCtrl.like);
+
+  //alarm
+  router.route('/alarm/list')
+    .get(authCtrl.auth, alarmCtrl.alarmList);
+
+  router.route('/alarm/item')
+    .post(authCtrl.auth, alarmCtrl.alarmItem);
+
+  //alarm test
+  router.route('/alarm/test')
+    .post(alarmCtrl.alarmTest);
 
 
   return router;
