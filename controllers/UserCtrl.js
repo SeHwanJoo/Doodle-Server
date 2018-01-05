@@ -7,11 +7,10 @@ const resMsg = require('../errors.json');
 const userModel = require('../models/UserModel');
 
 
-
 /*******************
  *  Register
  ********************/
-exports.register = async(req, res, next) => {
+exports.register = async (req, res, next) => {
 
   //TODO pw, image validation
   let pw;
@@ -22,9 +21,7 @@ exports.register = async(req, res, next) => {
   }
 
 
-
-  //TODO s3 dest 설정
- let image;
+  let image;
   if (!req.file) { // 이미지가 없는 경우
     image = null;
   } else {
@@ -50,12 +47,12 @@ exports.register = async(req, res, next) => {
   return res.status(201).json({
     "status": true,
     "message": "success",
-    "result" : result[0]
+    "result": result[0]
   });
 };
 
 
-exports.check = async(req, res, next) => {
+exports.check = async (req, res, next) => {
   let result = '';
   try {
     const userData = req.body.email;
@@ -79,7 +76,7 @@ exports.check = async(req, res, next) => {
 /*******************
  *  Login
  ********************/
-exports.login = async(req, res, next) => {
+exports.login = async (req, res, next) => {
 
   if (!req.body.email || !req.body.pw) {
     return res.status(400).end();
@@ -107,8 +104,8 @@ exports.login = async(req, res, next) => {
   return res.r(result);
 };
 
-exports.profile = async(req, res, next) => {
-  let result ='';
+exports.profile = async (req, res, next) => {
+  let result = '';
   try {
     const userData = req.userIdx;
 
@@ -126,13 +123,13 @@ exports.profile = async(req, res, next) => {
  * 닉네임수정
  * @param req
  */
-exports.edit = async(req, res, next) => {
-  let result ='';
+exports.edit = async (req, res, next) => {
+  let result = '';
   try {
 
     const editData = {
-      idx : req.user_idx,
-      nickname : req.body.nickname
+      idx: req.user_idx,
+      nickname: req.body.nickname
     };
 
     result = await userModel.edit(editData);
@@ -148,8 +145,8 @@ exports.edit = async(req, res, next) => {
  * 회원탈퇴
  * @param req
  */
-exports.delUser = async(req, res, next) => {
-  let result ='';
+exports.delUser = async (req, res, next) => {
+  let result = '';
   try {
     const data = req.user_idx;
 
@@ -170,9 +167,9 @@ exports.delUser = async(req, res, next) => {
  * @param next
  * @returns {Promise.<*>}
  */
-exports.findID = async(req,res,next) => {
+exports.findID = async (req, res, next) => {
   let result;
-  try{
+  try {
     const data = {
       email: req.body.email,
       name: req.body.name,
@@ -180,17 +177,13 @@ exports.findID = async(req,res,next) => {
 
     result = await userModel.findID(data);
 
-  } catch (error){
+  } catch (error) {
     console.log(error);
     return next(error)
   }
 
   return res.r(result[0]);
 };
-
-
-
-
 
 
 /************
@@ -213,13 +206,13 @@ exports.findPW = async (req, res, next) => {
     return ranNum;
   };
 
-  const secretNum = generateRandom(10000,99999);
+  const secretNum = generateRandom(10000, 99999);
 
-  try{
+  try {
     const data = {
       id: req.body.id,
       email: req.body.email,
-      secretNum: config.do_cipher(secretNum+''), // 스트링으로 변환뒤 암호화
+      secretNum: config.do_cipher(secretNum + ''), // 스트링으로 변환뒤 암호화
 
     };
     userEmail = await userModel.findPW(data);
@@ -230,7 +223,7 @@ exports.findPW = async (req, res, next) => {
       from: config.adminMail.auth.user,
       to: userEmail,
       subject: '글적 비밀번호 찾기',
-      text: '인증번호 : '+ secretNum
+      text: '인증번호 : ' + secretNum
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -243,7 +236,7 @@ exports.findPW = async (req, res, next) => {
       transporter.close();
     });
 
-  }catch (error){
+  } catch (error) {
     console.log(error);
     return next(error);
   }
@@ -260,16 +253,16 @@ exports.findPW = async (req, res, next) => {
  * @param next
  * @returns {Promise.<*>}
  */
-exports.confirmPW = async(req, res, next) => {
+exports.confirmPW = async (req, res, next) => {
   let result;
 
-  try{
+  try {
     const data = {
       secretNum: config.do_cipher(req.body.code),
     };
     result = await userModel.confirmPW(data);
 
-  }catch (error){
+  } catch (error) {
     console.log(error);
     return next(error);
   }
@@ -286,7 +279,7 @@ exports.confirmPW = async(req, res, next) => {
  * @returns {Promise.<*>}
  */
 
-exports.editPW = async(req, res, next) => {
+exports.editPW = async (req, res, next) => {
 
   let result;
   let pw;
@@ -296,7 +289,7 @@ exports.editPW = async(req, res, next) => {
     pw = req.body.pw1
   }
 
-  try{
+  try {
     const data = {
       pw: config.do_cipher(pw),
       id: req.body.id,
@@ -304,7 +297,7 @@ exports.editPW = async(req, res, next) => {
     };
     result = await userModel.editPW(data);
 
-  }catch (error){
+  } catch (error) {
     console.log(error);
     return next(error);
   }
@@ -313,16 +306,15 @@ exports.editPW = async(req, res, next) => {
 };
 
 
-
-exports.search = async(req, res, next) => {
+exports.search = async (req, res, next) => {
   let result;
 
-  try{
+  try {
     const data = req.params.keyword;
 
     result = await userModel.search(data);
 
-  } catch (error){
+  } catch (error) {
     return next(error);
   }
 
