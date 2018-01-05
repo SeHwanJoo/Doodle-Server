@@ -87,6 +87,7 @@ exports.read = (doodle_idx) => {
       "SELECT " +
       "  comments.*, " +
       "  users.nickname " +
+      "  users.image AS profile, " +
       "FROM comments " +
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ?";
