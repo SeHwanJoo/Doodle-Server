@@ -55,6 +55,9 @@ module.exports = (router) => {
   router.route('/doodle/post')
     .post(authCtrl.auth, postCtrl.post);
 
+  router.route('/doodle/get')
+    .get(postCtrl.get);
+
 
 
   //댓글

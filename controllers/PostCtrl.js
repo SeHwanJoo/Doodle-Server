@@ -33,3 +33,15 @@ exports.post = async(req, res, next) => {
 	return res.r(result);
 };
 
+exports.get = async(req, res, next) => {
+  let result = '';
+  try {
+    result = await postModel.get();
+  } catch (error) {
+    console.log(error);
+    return next(error)
+  }
+
+  return res.r(result);
+};
+

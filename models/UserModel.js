@@ -149,7 +149,7 @@ exports.login = (userData) => {
   ).then(() => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT email, nickname " +
+        "SELECT email, nickname, image AS profile " +
         "FROM users " +
         "WHERE email = ? and pw = ?";
 
