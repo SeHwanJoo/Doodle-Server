@@ -90,7 +90,8 @@ exports.read = (doodle_idx) => {
       "  users.image AS profile, " +
       "FROM comments " +
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
-      "WHERE comments.doodle_idx = ?";
+      "WHERE comments.doodle_idx = ? " +
+      "ORDER BY created DESC ";
     pool.query(sql, doodle_idx, (err, rows) => {
       if (err) {
         reject(err);

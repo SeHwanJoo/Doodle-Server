@@ -207,7 +207,8 @@ exports.read = (doodleData) => {
       "  LEFT JOIN doodle ON doodle.idx = scraps.doodle_idx " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
-      "WHERE scraps.user_idx = ? ";
+      "WHERE scraps.user_idx = ? " +
+      "ORDER BY scraps.created DESC ";
     pool.query(sql, [doodleData.user_idx, doodleData.user_idx, doodleData.user_idx], (err, rows) => {
       if (err) {
         reject(err);

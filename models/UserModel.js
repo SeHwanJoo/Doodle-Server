@@ -421,6 +421,7 @@ exports.search = (data) => {
         description
       FROM users
       WHERE nickname REGEXP ?
+      ORDER BY users.doodle_count DESC
       `;
 
     pool.query(sql, data, (err, rows) => {
