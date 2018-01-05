@@ -21,6 +21,7 @@ exports.allDoodle = (doodleData) => {
       "SELECT " +
       "  doodle.*, " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +
       "FROM doodle " +
@@ -55,6 +56,7 @@ exports.myDoodle = (doodleData) => {
       "SELECT " +
       "  doodle.*, " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +
       "FROM doodle " +

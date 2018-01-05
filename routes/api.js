@@ -7,6 +7,7 @@ const commentCtrl = require('../controllers/CommentCtrl');
 const scrapCtrl = require('../controllers/ScrapCtrl');
 const likeCtrl = require('../controllers/LikeCtrl');
 const postCtrl = require('../controllers/PostCtrl');
+const alarmCtrl = require('../controllers/AlarmCtrl');
 
 const imageCtrl = require('../controllers/ImageCtrl');
 
@@ -54,6 +55,9 @@ module.exports = (router) => {
   router.route('/doodle/post')
     .post(authCtrl.auth, imageCtrl.uploadSingle, postCtrl.post);
 
+  router.route('/doodle/get')
+    .get(postCtrl.get);
+
 
 
   //댓글
@@ -69,6 +73,17 @@ module.exports = (router) => {
   //like
   router.route('/like/:idx')
     .post(authCtrl.auth, likeCtrl.like);
+
+  //alarm
+  router.route('/alarm/list')
+    .get(authCtrl.auth, alarmCtrl.alarmList);
+
+  router.route('/alarm/item')
+    .post(authCtrl.auth, alarmCtrl.alarmItem);
+
+  //alarm test
+  router.route('/alarm/test')
+    .post(alarmCtrl.alarmTest);
 
 
   return router;

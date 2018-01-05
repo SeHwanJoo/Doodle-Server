@@ -79,6 +79,24 @@ exports.scrap = (scrapData) => {
           });
         })
       })
+      .then((context) => {
+        return new Promise((resolve, reject) => {
+          const sql = "INSERT INTO alarms SET ?";
+          let insertData = {
+            flag: 2,
+            user_idx: scrapData.user_idx,
+            doodle_idx: scrapData.doodle_idx
+          }
+          context.conn.query(sql, insertData, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
+        })
+      })
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
@@ -181,6 +199,7 @@ exports.read = (doodleData) => {
     const sql =
       "SELECT " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  doodle.*, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +
