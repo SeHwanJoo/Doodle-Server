@@ -39,6 +39,27 @@ exports.allDoodle = async (req, res, next) => {
   return res.r(result);
 };
 
+exports.other = async (req, res, next) => {
+
+  if (!req.body.idx) {
+    return res.status(400).end();
+  }
+  let result = '';
+  let idx = parseInt(req.body.flag);
+  console.log(flag);
+
+  const doodleData = {
+    idx: idx,
+    user_idx: req.userIdx
+  };
+  try {
+    result = await doodleModel.other(doodleData);
+  } catch (error) {
+    return next(error);
+  }
+  return res.r(result);
+};
+
 
 exports.check = async (req, res, next) => {
   let result = '';

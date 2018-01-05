@@ -75,6 +75,34 @@ exports.myDoodle = (doodleData) => {
   });
 };
 
+//TODO doodle.* 수정
+exports.other = (doodleData) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  doodle.*, " +
+      "  users.nickname, " +
+      "  users.image AS profile, " +
+      "  scraps.doodle_idx AS scraps, " +
+      "  `like`.doodle_idx AS `like` " +
+      "FROM doodle " +
+      "  LEFT JOIN users ON doodle.user_idx = users.idx " +
+      "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
+      "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
+      "WHERE doodle.user_idx = ? ";
+    const timeArray = [doodleData.user_idx, doodleData.user_idx, doodleData.idx];
+    pool.query(sql, timeArray, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
+
+
 
 /****************
  * 글귀 검색
