@@ -125,12 +125,21 @@ exports.login = async (req, res, next) => {
   return res.r(result);
 };
 
+/******
+ * 닉네임수정
+ * @param idx
+ */
 exports.profile = async (req, res, next) => {
   let result = '';
   try {
-    const userData = req.userIdx;
+    let userData;
+    if(parseInt(req.params.idx) === 0)
+      userData = req.userIdx;
+    else
+      userData = parseInt(req.params.idx);
 
     result = await userModel.profile(userData)
+    console.log(result);
 
   } catch (error) {
     console.log(error);

@@ -71,7 +71,7 @@ exports.duplicates = (userData) => {
     var flag = userData.flag;
     if (flag == 1) {
       var nickname = userData.nickname;
-      const sql = "select nickname from user where nickname = ?";
+      const sql = "select nickname from users where nickname = ?";
       pool.query(sql, nickname, (err, rows) => {
         if (err) {
           reject(err);
@@ -88,7 +88,7 @@ exports.duplicates = (userData) => {
     }
     else {
       var email = userData.email;
-      const sql = "select email from user where email = ?";
+      const sql = "select email from users where email = ?";
       pool.query(sql, email, (err, rows) => {
         if (err) {
           reject(err);
@@ -184,14 +184,14 @@ exports.profile = (userData) => {
     const sql =
       `
       SELECT
-        u.idx,
-        u.nickname,
-        u.description,
-        SUM(d.like_count)    AS like_count,
-        SUM(d.comment_count) AS comment_count
-      FROM users AS u
-        LEFT JOIN doodle AS d ON u.idx = d.user_idx
-      WHERE u.idx = ?
+        idx,
+        nickname,
+        description,
+        image,
+        doodle_count,
+        scrap_count
+      FROM users
+      WHERE idx = ?
       `;
 
     pool.query(sql, userData, (err, rows) => {
