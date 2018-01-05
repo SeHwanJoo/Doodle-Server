@@ -199,6 +199,7 @@ exports.read = (doodleData) => {
     const sql =
       "SELECT " +
       "  users.nickname, " +
+      "  users.image AS profile, " +
       "  doodle.*, " +
       "  scraps.doodle_idx AS scraps, " +
       "  `like`.doodle_idx AS `like` " +

@@ -55,6 +55,7 @@ exports.register = async (req, res, next) => {
 
 exports.duplicates = async(req, res, next) => {
   let result = '';
+
   try {
     const userData = {
       email : req.body.email,

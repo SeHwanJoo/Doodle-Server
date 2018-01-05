@@ -3,10 +3,13 @@
 const mysql = require('mysql');
 const DBConfig = require('./../config/DBConfig');
 const pool = mysql.createPool(DBConfig);
+const config = require('./../config/config');
 const moment = require('moment');
 const moment_timezone = require('moment-timezone');
 
 moment.tz.setDefault('Asia/Seoul');
+
+var FCM = require('fcm-push');
 
 
 /****************
@@ -72,4 +75,24 @@ exports.item = (alarmData) => {
       }
     });
   });
+}
+
+exports.fcm = (token, data) => {
+  return new Promise((resolve, reject) =>{
+    var fcm = new FCM(config.fcm.apiKey);
+    var fcm_message = {
+      to: token, // required
+      collapse_key: 'test',
+      data: data
+    };
+    fcm.send(fcm_message, function (err, messageId) {
+      if (err) {
+        console.log("Something has gone wrong!");
+        reject(err);
+      } else {
+        resolve(messageId);
+        console.log("Sent with message ID: ", messageId);
+      }
+    });
+  })
 }
