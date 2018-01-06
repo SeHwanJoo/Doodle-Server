@@ -138,8 +138,8 @@ exports.profile = async (req, res, next) => {
     else
       userData = parseInt(req.params.idx);
 
-    result = await userModel.profile(userData)
-    console.log(result);
+    result = await userModel.profile(userData);
+
 
   } catch (error) {
     console.log(error);

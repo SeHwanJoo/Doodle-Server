@@ -19,7 +19,6 @@ exports.allDoodle = async (req, res, next) => {
   }
   let result = '';
   let flag = parseInt(req.body.flag);
-  console.log(flag);
 
   const doodleData = {
     flag: flag,
@@ -46,7 +45,6 @@ exports.other = async (req, res, next) => {
   }
   let result = '';
   let idx = parseInt(req.body.flag);
-  console.log(flag);
 
   const doodleData = {
     idx: idx,
