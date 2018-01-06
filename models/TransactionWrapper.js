@@ -24,7 +24,7 @@ exports.beginTransaction = (context) => {
       if (err) {
         context.error = err;
         return reject(context);
-      } else{
+      } else {
         return resolve(context);
       }
     });
@@ -38,7 +38,7 @@ exports.commitTransaction = (context) => {
       if (err) {
         context.error = err;
         return reject(context);
-      } else{
+      } else {
         return resolve(context);
       }
     });

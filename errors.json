@@ -11,13 +11,18 @@
     "message": "로그인에 실패하였습니다.",
     "description": "Login Fail"
   },
-
-
+  
+  "1400" : {
+    "status": 400,
+    "code": 0,
+    "message": "1",
+    "description": "Exist nickname"
+  },
   "1401": {
     "status": 400,
     "code": 0,
-    "message": "아이디가 중복됩니다.",
-    "description": "Exist ID"
+    "message": "2",
+    "description": "Exist email"
   },
   "1402": {
     "status": 400,
@@ -90,11 +95,11 @@
     "description": "Internal Server Error"
   },
   "8400": {
-    "status": false,
+    "status": 400,
     "message": "400 Error"
   },
   "9500": {
-    "status": false,
+    "status": 400,
     "message": "500 Error"
   }
 }
