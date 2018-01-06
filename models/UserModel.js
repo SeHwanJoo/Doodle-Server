@@ -51,7 +51,7 @@ exports.register = (userData) => {
   ).then((result) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT idx, email, nickname, created " +
+        "SELECT idx, email, nickname, created, image " +
         "FROM users " +
         "WHERE idx = ?";
 
