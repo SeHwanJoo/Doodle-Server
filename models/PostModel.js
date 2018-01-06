@@ -3,9 +3,7 @@
 const mysql = require('mysql');
 const DBConfig = require('./../config/DBConfig');
 const pool = mysql.createPool(DBConfig);
-
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const transactionWrapper = require('./TransactionWrapper');
 
 
 /*
@@ -37,7 +35,7 @@ exports.post = (postData) => {
       });
     }).then((context) => {
       return new Promise((resolve, reject) => {
-        const sql = "UPDATE users SET doodle_count = doodle_count+1 WHERE idx = ?"
+        const sql = "UPDATE users SET doodle_count = doodle_count+1 WHERE idx = ?";
         context.conn.query(sql, postData.user_idx, (err, rows) => {
           if (err) {
             context.error = err;
