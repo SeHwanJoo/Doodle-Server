@@ -67,3 +67,16 @@ exports.alarmTest = async (req, res, next) => {
 
   return res.r(result);
 };
+
+exports.alarmCount = async(req, res, next) => {
+  let result = '';
+  try {
+
+    result = await alarmModel.count(req.userIdx);
+
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+  return res.r(result);
+}
