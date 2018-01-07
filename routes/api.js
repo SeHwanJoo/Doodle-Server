@@ -47,9 +47,9 @@ module.exports = (router) => {
 
 
   router.route('/search/users/:keyword')
-    .get(userCtrl.search);
+    .get(authCtrl.auth, userCtrl.search);
   router.route('/search/doodle/:keyword')
-    .get(doodleCtrl.search);
+    .get(authCtrl.auth, doodleCtrl.search);
 
   //글작성
   router.route('/doodle/post')

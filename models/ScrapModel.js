@@ -123,7 +123,7 @@ exports.unscrap = (scrapData) => {
               context.error = err;
               reject(context);
             } else {
-              console.log(rows);
+              //console.log(rows);
               if (rows.affectedRows === 0) {
                 context.error = 'twice unscrap';
                 reject(context);
