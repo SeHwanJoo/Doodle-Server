@@ -45,9 +45,13 @@ exports.read = async (req, res, next) => {
     return res.status(400).end();
   }
   let result = '';
+  const readData = {
+    userIdx: req.userIdx,
+    doodle_idx:parseInt(req.params.idx)
+  }
 
   try {
-    result = await commentModel.read(parseInt(req.params.idx));
+    result = await commentModel.read(readData);
   } catch (error) {
     return next(error);
   }

@@ -96,3 +96,21 @@ exports.fcm = (token, data) => {
     });
   })
 }
+
+exports.count = (userIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql ='SELECT COUNT(idx) FROM alarms WHERE is_read = 0 && user_idx_alarm = ? GROUP BY doodle_idx, flag ';
+    pool.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        let count = rows.length;
+        let context = {
+          count : count
+        }
+        resolve(context);
+      }
+    });
+  })
+
+}
