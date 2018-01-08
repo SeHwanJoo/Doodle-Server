@@ -102,7 +102,8 @@ exports.write = (writeData) => {
   });
 };
 
-exports.read = (readData) => {
+
+exports.read1 = (doodle_idx) => {
   return new Promise((resolve, reject) => {
     const context = {};
     const sql =
@@ -122,29 +123,33 @@ exports.read = (readData) => {
         resolve(context);
       }
     });
-  })
-    .then((context) => {
-      return new Promise((resolve, reject) => {
-        const sql =
-          "SELECT " +
-          "  doodle.*, " +
-          "  users.nickname, " +
-          "  users.image AS profile, " +
-          "  scraps.doodle_idx AS scraps, " +
-          "  `like`.doodle_idx AS `like` " +
-          "FROM doodle " +
-          "  LEFT JOIN users ON doodle.user_idx = users.idx " +
-          "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
-          "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
-          "WHERE doodle.idx = ? ";
-        pool.query(sql, [readData.userIdx, readData.userIdx, readData.doodle_idx], (err, rows) => {
-          if (err) {
-            reject(err);
-          } else {
-            context.doodle = rows[0];
-            resolve(context);
-          }
-        })
-      })
-    })
+  });
 };
+
+exports.read2 = (doodle_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      `
+      SELECT
+        u.nickname,
+        u.image,
+        d.scrap_count,
+        (SELECT COUNT(idx)
+         FROM comments
+         WHERE doodle_idx = ?) AS comment_count,
+        d.like_count,
+        date_format(convert_tz(d.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created
+      FROM doodle AS d
+        LEFT JOIN users AS u ON d.user_idx = u.idx
+      WHERE d.idx = ?;
+      `;
+    pool.query(sql, [doodle_idx, doodle_idx], (err, rows) => {
+      if(err){
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+

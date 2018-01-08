@@ -45,15 +45,27 @@ exports.read = async (req, res, next) => {
     return res.status(400).end();
   }
   let result = '';
-  const readData = {
-    userIdx: req.userIdx,
-    doodle_idx:parseInt(req.params.idx)
-  }
+  let temp1 = '';
+  let temp2 = '';
 
   try {
-    result = await commentModel.read(readData);
+    //TODO 쿼리 합치기
+    temp1 = await commentModel.read1(parseInt(req.params.idx));
+    temp2 = await  commentModel.read2(req.params.idx);
+
   } catch (error) {
     return next(error);
   }
+
+  result.doodler = {};
+  result.comments = {};
+  for(let i=0 ; i<temp1.length ; i++){
+    result.comments = temp1[i]
+  }
+  for(let i=0; i<temp2.length;i++){
+    result.doodler = temp2[i]
+  }
+
+
   res.r(result);
 };
