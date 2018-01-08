@@ -3,6 +3,7 @@
 const mysql = require('mysql');
 const DBConfig = require('./../config/DBConfig');
 const pool = mysql.createPool(DBConfig);
+const fcm = require('./AlarmModel');
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
@@ -45,12 +46,30 @@ exports.write = (writeData) => {
         })
       })
       .then((context) => {
+        return new Promise((resolve,reject) => {
+          const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
+            "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
+          context.conn.query(sql, [writeData.user_idx, writeData.doodle_idx], (err, rows) => {
+            if(err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.token = rows[1].token;
+              context.body =  rows[0].token + '님이 회원님의 글에 댓글을 남겼습니다.';
+              context.userIdx = rows[1].idx;
+              resolve(context);
+            }
+          })
+        })
+      })
+      .then((context) => {
         return new Promise((resolve, reject) => {
           const sql = "INSERT INTO alarms SET ?";
           let insertData = {
             flag: 1,
             user_idx: writeData.user_idx,
-            doodle_idx: writeData.doodle_idx
+            doodle_idx: writeData.doodle_idx,
+            user_idx_alarm: context.userIdx
           }
           context.conn.query(sql, insertData, (err, rows) => {
             if (err) {
@@ -62,10 +81,12 @@ exports.write = (writeData) => {
           });
         })
       })
+
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
         resolve(context.result);
+        return fcm(context);
       })
       .catch((context) => {
 
