@@ -115,7 +115,7 @@ exports.read1 = (doodle_idx) => {
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ? " +
       "ORDER BY created DESC ";
-    pool.query(sql, readData.doodle_idx, (err, rows) => {
+    pool.query(sql, doodle_idx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -147,7 +147,7 @@ exports.read2 = (doodle_idx) => {
       if(err){
         reject(err);
       } else {
-        resolve(rows);
+        resolve(rows[0]);
       }
     });
   });
