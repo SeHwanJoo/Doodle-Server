@@ -46,11 +46,7 @@ exports.register = async (req, res, next) => {
     return next(error)
   }
 
-  return res.status(201).json({
-    "status": true,
-    "message": "success",
-    "result": result[0]
-  });
+  return res.r(result[0]);
 };
 
 exports.duplicates = async(req, res, next) => {
@@ -133,10 +129,10 @@ exports.profile = async (req, res, next) => {
   let result = '';
   try {
     let userData;
-    if(parseInt(req.params.idx) === 0)
+    // if(parseInt(req.params.idx) === 0)
       userData = req.userIdx;
-    else
-      userData = parseInt(req.params.idx);
+    // else
+    //   userData = parseInt(req.params.idx);
 
     result = await userModel.profile(userData);
 
