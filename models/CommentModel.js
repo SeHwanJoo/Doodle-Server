@@ -81,9 +81,9 @@ exports.write = (writeData) => {
   });
 };
 
-exports.read = (doodle_idx) => {
+exports.read = (readData) => {
   return new Promise((resolve, reject) => {
-    let context = '';
+    const context = {};
     const sql =
       "SELECT " +
       "  comments.*, " +
@@ -93,7 +93,7 @@ exports.read = (doodle_idx) => {
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ? " +
       "ORDER BY created DESC ";
-    pool.query(sql, doodle_idx, (err, rows) => {
+    pool.query(sql, readData.doodle_idx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -116,7 +116,7 @@ exports.read = (doodle_idx) => {
           "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
           "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
           "WHERE doodle.idx = ? ";
-        pool.query(sql, doodle_idx, (err, rows) => {
+        pool.query(sql, [readData.userIdx, readData.userIdx, readData.doodle_idx], (err, rows) => {
           if (err) {
             reject(err);
           } else {

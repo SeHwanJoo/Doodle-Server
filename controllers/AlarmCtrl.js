@@ -49,24 +49,6 @@ exports.alarmItem = async (req, res, next) => {
   return res.r(result);
 };
 
-exports.alarmTest = async (req, res, next) => {
-
-  let result = '';
-  const alarmData = {
-    title: req.body.title,
-    body: req.body.body
-  }
-  try {
-
-    result = await alarmModel.fcm(req.body.token,alarmData);
-
-  } catch (error) {
-    console.log(error);
-    return next(error)
-  }
-
-  return res.r(result);
-};
 
 exports.alarmCount = async(req, res, next) => {
   let result = '';

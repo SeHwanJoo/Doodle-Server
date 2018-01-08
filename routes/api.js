@@ -86,8 +86,8 @@ module.exports = (router) => {
     .get(authCtrl.auth, alarmCtrl.alarmCount);
 
   //alarm test
-  router.route('/alarm/test')
-    .post(alarmCtrl.alarmTest);
+  // router.route('/alarm/test')
+  //   .post(alarmCtrl.alarmTest);
 
 
   return router;
