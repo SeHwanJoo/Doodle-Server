@@ -6,6 +6,7 @@ const pool = mysql.createPool(DBConfig);
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
+const alarmModel = require('./AlarmModel');
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -63,20 +64,36 @@ exports.scrap = (scrapData) => {
       })
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "SELECT scrap_count FROM doodle WHERE idx = ? UNION" +
-            " SELECT scrap_count FROM users WHERE idx = ?";
+          const sql = "SELECT scrap_count FROM doodle WHERE idx = ? ";
           context.conn.query(sql, [scrapData.doodle_idx, scrapData.user_idx], (err, rows) => {
             if (err) {
               context.error = err;
               reject(context);
             } else {
+              console.log(rows);
               context.result = {
-                count: rows[0].scrap_count,
-                user_count: rows[1].scrap_count
+                count: rows[0].scrap_count
               };
               resolve(context);
             }
           });
+        })
+      })
+      .then((context) => {
+        return new Promise((resolve,reject) => {
+          const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
+            "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
+          context.conn.query(sql, [scrapData.user_idx, scrapData.doodle_idx], (err, rows) => {
+            if(err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.token = rows[1].token;
+              context.body =  rows[0].token + '님이 회원님의 글을 담아갔습니다.';
+              context.userIdx = rows[1].idx;
+              resolve(context);
+            }
+          })
         })
       })
       .then((context) => {
@@ -85,7 +102,8 @@ exports.scrap = (scrapData) => {
           let insertData = {
             flag: 2,
             user_idx: scrapData.user_idx,
-            doodle_idx: scrapData.doodle_idx
+            doodle_idx: scrapData.doodle_idx,
+            user_idx_alarm: context.userIdx
           }
           context.conn.query(sql, insertData, (err, rows) => {
             if (err) {
@@ -101,6 +119,7 @@ exports.scrap = (scrapData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
+        return alarmModel.fcm(context);
       })
       .catch((context) => {
         context.conn.rollback(() => {
