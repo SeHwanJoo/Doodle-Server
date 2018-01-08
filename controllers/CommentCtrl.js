@@ -53,7 +53,6 @@ exports.read = async (req, res, next) => {
     temp1 = await commentModel.read1(parseInt(req.params.idx));
     temp2 = await  commentModel.read2(req.params.idx);
 
-
   } catch (error) {
     return next(error);
   }

@@ -77,22 +77,42 @@ exports.item = (alarmData) => {
   });
 }
 
-exports.fcm = (token, data) => {
+exports.fcm = (context) => {
   return new Promise((resolve, reject) =>{
     var fcm = new FCM(config.fcm.apiKey);
     var fcm_message = {
-      to: token, // required
+      to: context.token, // required
       collapse_key: 'test',
-      data: data
+      data: context.data
     };
     fcm.send(fcm_message, function (err, messageId) {
       if (err) {
         console.log("Something has gone wrong!");
-        reject(err);
+        context.err = err;
+        resolve(context);
       } else {
-        resolve(messageId);
+        context.err = err;
+        resolve(context);
         console.log("Sent with message ID: ", messageId);
       }
     });
   })
+}
+
+exports.count = (userIdx) => {
+  return new Promise((resolve, reject) => {
+    const sql ='SELECT COUNT(idx) FROM alarms WHERE is_read = 0 && user_idx_alarm = ? GROUP BY doodle_idx, flag ';
+    pool.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        let count = rows.length;
+        let context = {
+          count : count
+        }
+        resolve(context);
+      }
+    });
+  })
+
 }
