@@ -3,7 +3,7 @@
 const mysql = require('mysql');
 const DBConfig = require('./../config/DBConfig');
 const pool = mysql.createPool(DBConfig);
-const fcm = require('./AlarmModel');
+const alarmModel = require('./AlarmModel');
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
@@ -86,7 +86,7 @@ exports.write = (writeData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
-        return fcm(context);
+        return alarmModel.fcm(context);
       })
       .catch((context) => {
 

@@ -6,6 +6,7 @@ const pool = mysql.createPool(DBConfig);
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
+const alarmModel = require('./AlarmModel');
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -48,6 +49,23 @@ exports.like = (likeData) => {
         })
       })
       .then((context) => {
+        return new Promise((resolve,reject) => {
+          const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
+            "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
+          context.conn.query(sql, [likeData.user_idx, likeData.doodle_idx], (err, rows) => {
+            if(err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.token = rows[1].token;
+              context.body =  rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
+              context.userIdx = rows[1].idx;
+              resolve(context);
+            }
+          })
+        })
+      })
+      .then((context) => {
         return new Promise((resolve, reject) => {
           const sql =
             "SELECT like_count FROM doodle WHERE idx = ?";
@@ -70,7 +88,8 @@ exports.like = (likeData) => {
           let insertData = {
             flag: 0,
             user_idx: likeData.user_idx,
-            doodle_idx: likeData.doodle_idx
+            doodle_idx: likeData.doodle_idx,
+            user_idx_alarm: context.userIdx
           }
           context.conn.query(sql, insertData, (err, rows) => {
             if (err) {
@@ -86,6 +105,7 @@ exports.like = (likeData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
+        return alarmModel.fcm(context);
       })
       .catch((context) => {
         context.conn.rollback(() => {
