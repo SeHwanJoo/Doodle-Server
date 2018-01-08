@@ -155,7 +155,7 @@ exports.login = (userData) => {
   ).then(() => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT email, nickname, image AS profile " +
+        "SELECT email, nickname, idx, image AS profile " +
         "FROM users " +
         "WHERE email = ? and pw = ?";
 
@@ -168,7 +168,8 @@ exports.login = (userData) => {
           } else {
             const profile = {
               email: rows[0].email,
-              nickname: rows[0].nickname
+              nickname: rows[0].nickname,
+              idx: rows[0].idx
             };
             const token = jwt.sign(profile, config.jwt.cert, {'expiresIn': "10h"});
 
@@ -181,7 +182,19 @@ exports.login = (userData) => {
         }
       });
     });
-  });
+  })
+    .then((result)=> {
+      return new Promise((resolve,  reject) =>{
+        const sql = "UPDATE users SET token = ? WHERE idx = ?";
+        pool.query(sql,[result.token, result.profile.idx], (err,rows) =>{
+          if(err){
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        })
+      })
+    })
 };
 
 

@@ -104,7 +104,8 @@ exports.login = async (req, res, next) => {
   try {
     const userData = {
       email: req.body.email,
-      pw: config.do_cipher(req.body.pw)
+      pw: config.do_cipher(req.body.pw),
+      token: req.body.token ? req.body.token : 'token'
     };
 
     result = await userModel.login(userData);
