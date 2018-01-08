@@ -56,7 +56,10 @@ exports.read = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
-  result.comments = temp1;
+  result.comments = temp1.comments;
+  // for(let i=0 ; i<temp1.length ; i++){
+  //   result.comments[i] = temp1[i]
+  // }
   result.doodle = temp2;
 
 
