@@ -86,8 +86,8 @@ exports.read = (doodle_idx) => {
     const sql =
       "SELECT " +
       "  comments.*, " +
-      "  users.nickname " +
-      "  users.image AS profile, " +
+      "  users.nickname, " +
+      "  users.image AS profile " +
       "FROM comments " +
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ? " +
