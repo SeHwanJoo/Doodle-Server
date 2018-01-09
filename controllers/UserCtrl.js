@@ -348,3 +348,19 @@ exports.search = async(req, res, next) => {
 
   return res.r(result);
 };
+
+exports.other = async(req, res, next) => {
+  let result = {};
+
+  try{
+    const user_idx = parseInt(req.params.idx);
+
+    result.user = await userModel.other_user(user_idx);
+    result.doodle = await userModel.other_doodle(user_idx);
+
+  } catch (error){
+    return next(error);
+  }
+
+  return res.r(result);
+};

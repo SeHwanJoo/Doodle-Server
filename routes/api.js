@@ -42,6 +42,9 @@ module.exports = (router) => {
   router.route('/users/edit/pw')
     .post(userCtrl.editPW);
 
+  router.route('/users/other/:idx')
+    .get(authCtrl.auth, userCtrl.other);
+
   router.route('/doodle/all')
     .post(authCtrl.auth ,doodleCtrl.allDoodle);
 

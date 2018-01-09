@@ -446,3 +446,49 @@ exports.search = (data) => {
     });
   });
 };
+
+exports.other_user = (user_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  users.nickname, " +
+      "  users.image AS profile, " +
+      "  users.description, " +
+      "  users.scrap_count, " +
+      "  users.doodle_count " +
+      "FROM users " +
+      "WHERE idx = ? ";
+    pool.query(sql, user_idx, (err,rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+
+  });
+};
+
+exports.other_doodle = (user_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  doodle.*, " +
+      "  scraps.doodle_idx AS scraps, " +
+      "  `like`.doodle_idx AS `like` " +
+      "FROM doodle " +
+      "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
+      "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
+      "WHERE doodle.user_idx = ? " +
+      "ORDER BY doodle.created DESC ";
+    const data = [user_idx,user_idx,user_idx];
+    pool.query(sql, data, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+
+  });
+};
