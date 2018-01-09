@@ -51,6 +51,7 @@ module.exports = (router) => {
 
   router.route('/search/users/:keyword')
     .get(authCtrl.auth, userCtrl.search);
+
   router.route('/search/doodle/:keyword')
     .get(authCtrl.auth, doodleCtrl.search);
 

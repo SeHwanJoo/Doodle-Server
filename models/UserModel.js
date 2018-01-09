@@ -169,6 +169,7 @@ exports.login = (userData) => {
             const profile = {
               email: rows[0].email,
               nickname: rows[0].nickname,
+              profile: rows[0].profile,
               idx: rows[0].idx
             };
             const token = jwt.sign(profile, config.jwt.cert, {'expiresIn': "10h"});
