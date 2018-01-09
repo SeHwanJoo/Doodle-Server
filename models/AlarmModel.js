@@ -116,3 +116,18 @@ exports.count = (userIdx) => {
   })
 
 }
+
+exports.token = (tokenData) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    const sql ='UPDATE users SET token = ? WHERE idx = ?';
+    pool.query(sql, [tokenData.token, tokenData.userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  })
+
+};

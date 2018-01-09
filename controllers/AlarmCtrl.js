@@ -61,4 +61,21 @@ exports.alarmCount = async(req, res, next) => {
     return next(error);
   }
   return res.r(result);
-}
+};
+
+exports.token = async(req, res, next) => {
+  let result = '';
+  try {
+    const tokenData = {
+      userIdx : req.userIdx,
+      token : req.body.token
+    };
+
+    result = await alarmModel.token(tokenData);
+
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+  return res.r(result);
+};
