@@ -462,7 +462,7 @@ exports.other_user = (user_idx) => {
       if (err) {
         reject(err);
       } else {
-        resolve(rows);
+        resolve(rows[0]);
       }
     });
 
