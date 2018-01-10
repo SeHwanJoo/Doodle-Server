@@ -32,7 +32,7 @@ module.exports = (router) => {
     .delete(authCtrl.auth, userCtrl.delUser);
 
   router.route('/users/modify')
-    .post(authCtrl.auth, imageCtrl.uploadSingle, userCtrl.modify);
+    .put(authCtrl.auth, imageCtrl.uploadSingle, userCtrl.modify);
 
 
   router.route('/users/find/id')
