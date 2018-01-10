@@ -57,8 +57,9 @@ exports.like = (likeData) => {
               context.error = err;
               reject(context);
             } else {
-              context.token = rows[1].token;
-              context.body =  rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
+              context.fcm = {};
+              context.fcm.token = rows[1].token;
+              context.fcm.body =  rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
               context.userIdx = rows[1].idx;
               resolve(context);
             }
@@ -105,7 +106,7 @@ exports.like = (likeData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
-        return alarmModel.fcm(context);
+        return alarmModel.fcm(context.fcm);
       })
       .catch((context) => {
         context.conn.rollback(() => {

@@ -375,6 +375,7 @@ exports.other = async(req, res, next) => {
 exports.modify = async(req, res, next) => {
   let result = '';
   let image;
+  console.log(req.body);
   if (!req.file) { // 이미지가 없는 경우
     image = null;
   } else {

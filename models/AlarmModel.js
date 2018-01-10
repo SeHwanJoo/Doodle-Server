@@ -83,8 +83,12 @@ exports.fcm = (context) => {
     var fcm_message = {
       to: context.token, // required
       collapse_key: 'test',
-      data: context.data
+      data: {
+        title:'글적',
+        body:context.body
+      }
     };
+    console.log(fcm_message);
     fcm.send(fcm_message, function (err, messageId) {
       if (err) {
         console.log("Something has gone wrong!");

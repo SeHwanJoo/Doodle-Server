@@ -155,7 +155,7 @@ exports.login = (userData) => {
   ).then(() => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT email, nickname, idx, image AS profile " +
+        "SELECT email, nickname, idx, image AS profile ,description " +
         "FROM users " +
         "WHERE email = ? and pw = ?";
 
@@ -170,7 +170,8 @@ exports.login = (userData) => {
               email: rows[0].email,
               nickname: rows[0].nickname,
               profile: rows[0].profile,
-              idx: rows[0].idx
+              idx: rows[0].idx,
+              description: rows[0].description
             };
             const token = jwt.sign(profile, config.jwt.cert, {'expiresIn': "10h"});
 
@@ -187,7 +188,7 @@ exports.login = (userData) => {
     .then((result)=> {
       return new Promise((resolve,  reject) =>{
         const sql = "UPDATE users SET token = ? WHERE idx = ?";
-        pool.query(sql,[result.token, result.profile.idx], (err,rows) =>{
+        pool.query(sql,[userData.token, result.profile.idx], (err,rows) =>{
           if(err){
             reject(err);
           } else {
@@ -499,12 +500,13 @@ exports.modify = (modifyData) => {
   return new Promise((resolve, reject) => {
     let sql = '';
     let dataArray = [];
+    console.log(modifyData);
     if(modifyData.flag === 1){
       sql = 'UPDATE users SET description = ? WHERE idx = ?';
       dataArray = [modifyData.description, modifyData.userIdx];
     } else if(modifyData.flag === 2){
       sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
-      dataArray = [modifyData.image, description, modifyData.userIdx];
+      dataArray = [modifyData.image, modifyData.description, modifyData.userIdx];
     } else if(modifyData.flag === 3){
       sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
       dataArray = [null, modifyData.description, modifyData.userIdx];
