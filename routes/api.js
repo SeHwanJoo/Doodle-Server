@@ -31,6 +31,8 @@ module.exports = (router) => {
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
 
+  router.route('/users/modify')
+    .post(authCtrl.auth, imageCtrl.uploadSingle, userCtrl.modify);
 
 
   router.route('/users/find/id')

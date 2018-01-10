@@ -62,10 +62,10 @@ exports.get = () => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT image FROM images LIMIT 0,3";
 
-    context.conn.query(sql, (err, rows) => {  // 아이디 중복 체크
+    pool.query(sql, (err, rows) => {  // 아이디 중복 체크
       if (err) {
         context.error = err;
-        reject(context);
+        reject(err);
       }
       else {
         resolve(rows);

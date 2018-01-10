@@ -493,3 +493,27 @@ exports.other_doodle = (user_idx) => {
 
   });
 };
+
+exports.modify = (modifyData) => {
+  return new Promise((resolve, reject) => {
+    let sql = '';
+    let dataArray = [];
+    if(modifyData.flag === 1){
+      sql = 'UPDATE users SET description = ? WHERE idx = ?';
+      dataArray = [modifyData.description, modifyData.userIdx];
+    } else if(modifyData.flag === 2){
+      sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
+      dataArray = [modifyData.image, description, modifyData.userIdx];
+    } else if(modifyData.flag === 3){
+      sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
+      dataArray = [null, modifyData.description, modifyData.userIdx];
+    }
+    pool.query(sql, dataArray, (err,rows) => {
+      if(err) {
+        reject (err);
+      } else {
+        resolve();
+      }
+    })
+  })
+}

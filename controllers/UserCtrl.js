@@ -364,3 +364,32 @@ exports.other = async(req, res, next) => {
 
   return res.r(result);
 };
+
+
+/*********
+ * 사진, 설명 변경
+ * @body image, flag, description
+ */
+
+
+exports.modify = async(req, res, next) => {
+  let result = '';
+  let image;
+  if (!req.file) { // 이미지가 없는 경우
+    image = null;
+  } else {
+    image = req.file.location;
+  }
+  try {
+    const modifyData = {
+      image: image,
+      description: req.body.description,
+      flag: parseInt(req.body.flag),
+      userIdx : req.userIdx
+    }
+    result = await userModel.modify(modifyData);
+  } catch(error){
+    return next(error);
+  }
+  return res.r(result);
+}
