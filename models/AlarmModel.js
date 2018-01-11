@@ -85,7 +85,9 @@ exports.fcm = (context) => {
       collapse_key: 'test',
       data: {
         title:'글적',
-        body:context.body
+        body:context.body,
+        type: context.type,
+        idx: context.idx
       }
     };
     console.log(fcm_message);

@@ -72,7 +72,8 @@ exports.scrap = (scrapData) => {
             } else {
               console.log(rows);
               context.result = {
-                count: rows[0].scrap_count
+                count: rows[0].scrap_count,
+                idx: scrapData.doodle_idx
               };
               resolve(context);
             }
@@ -88,8 +89,11 @@ exports.scrap = (scrapData) => {
               context.error = err;
               reject(context);
             } else {
-              context.token = rows[1].token;
-              context.body =  rows[0].token + '님이 회원님의 글을 담아갔습니다.';
+              context.fcm = {};
+              context.fcm.token = rows[1].token;
+              context.fcm.body =  rows[0].token + '님이 회원님의 글을 담아갔습니다.';
+              context.fcm.type = 1000;
+              context.fcm.idx = scrapData.doodle_idx;
               context.userIdx = rows[1].idx;
               resolve(context);
             }
@@ -119,7 +123,7 @@ exports.scrap = (scrapData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
-        return alarmModel.fcm(context);
+        return alarmModel.fcm(context.fcm);
       })
       .catch((context) => {
         context.conn.rollback(() => {

@@ -60,6 +60,8 @@ exports.like = (likeData) => {
               context.fcm = {};
               context.fcm.token = rows[1].token;
               context.fcm.body =  rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
+              context.fcm.type = 1000;
+              context.fcm.idx = likeData.doodle_idx;
               context.userIdx = rows[1].idx;
               resolve(context);
             }
@@ -76,7 +78,8 @@ exports.like = (likeData) => {
               reject(context);
             } else {
               context.result = {
-                count: rows[0].like_count
+                count: rows[0].like_count,
+                idx: likeData.doodle_idx
               };
               resolve(context);
             }

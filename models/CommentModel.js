@@ -54,9 +54,12 @@ exports.write = (writeData) => {
               context.error = err;
               reject(context);
             } else {
-              context.token = rows[1].token;
-              context.body =  rows[0].token + '님이 회원님의 글에 댓글을 남겼습니다.';
+              context.fcm = {};
+              context.fcm.token = rows[1].token;
+              context.fcm.body =  rows[0].token + '님이 회원님의 글에 댓글을 남겼습니다.';
               context.userIdx = rows[1].idx;
+              context.fcm.idx = writeData.doodle_idx;
+              context.fcm.type = 1000;
               resolve(context);
             }
           })
@@ -86,7 +89,7 @@ exports.write = (writeData) => {
       .then((context) => {
         context.conn.release();
         resolve(context.result);
-        return alarmModel.fcm(context);
+        return alarmModel.fcm(context.fcm);
       })
       .catch((context) => {
 
