@@ -479,7 +479,8 @@ exports.other_doodle = (user_idx) => {
       "SELECT " +
       "  doodle.*, " +
       "  scraps.doodle_idx AS scraps, " +
-      "  `like`.doodle_idx AS `like` " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM doodle " +
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +

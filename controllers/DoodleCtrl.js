@@ -38,13 +38,17 @@ exports.allDoodle = async (req, res, next) => {
   return res.r(result);
 };
 
+/*******************
+ *  request doodle
+ *  @params: {idx}
+ ********************/
 exports.other = async (req, res, next) => {
 
-  if (!req.body.idx) {
+  if (!req.params.idx) {
     return res.status(400).end();
   }
   let result = '';
-  let idx = parseInt(req.body.flag);
+  let idx = parseInt(req.params.idx);
 
   const doodleData = {
     idx: idx,
