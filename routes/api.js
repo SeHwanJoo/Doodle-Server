@@ -66,7 +66,7 @@ module.exports = (router) => {
 
   router.route('/doodle/get/:idx')
     .get(authCtrl.auth, doodleCtrl.get);
-  
+
   router.route('/doodle/get')
     .get(postCtrl.get);
 

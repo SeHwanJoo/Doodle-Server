@@ -86,25 +86,6 @@ exports.like = (likeData) => {
           });
         })
       })
-      .then((context) => {
-        return new Promise((resolve, reject) => {
-          const sql = "INSERT INTO alarms SET ?";
-          let insertData = {
-            flag: 0,
-            user_idx: likeData.user_idx,
-            doodle_idx: likeData.doodle_idx,
-            user_idx_alarm: context.userIdx
-          }
-          context.conn.query(sql, insertData, (err, rows) => {
-            if (err) {
-              context.error = err;
-              reject(context);
-            } else {
-              resolve(context);
-            }
-          });
-        })
-      })
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
