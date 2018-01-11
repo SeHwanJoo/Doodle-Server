@@ -63,6 +63,8 @@ module.exports = (router) => {
   //글작성
   router.route('/doodle/post')
     .post(authCtrl.auth, imageCtrl.uploadSingle, postCtrl.post);
+  router.route('/doodle/get/:idx')
+    .get(authCtrl.auth, doodleCtrl.get);
   router.route('/doodle/get')
     .get(postCtrl.get);
   router.route('/doodle/other')

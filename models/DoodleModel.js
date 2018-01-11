@@ -169,3 +169,27 @@ exports.delete = (data) => {
     });
   });
 };
+
+exports.get = (data) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  doodle.*, " +
+      "  users.nickname, " +
+      "  users.image AS profile, " +
+      "  scraps.doodle_idx AS scraps, " +
+      "  `like`.doodle_idx AS `like` " +
+      "FROM doodle " +
+      "  LEFT JOIN users ON doodle.user_idx = users.idx " +
+      "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
+      "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
+      "WHERE doodle.idx = ? ";
+    pool.query(sql, [data.userIdx, data.userIdx, data.idx], (err, rows) => {
+      if(err) {
+        reject(err);
+      } else{
+        resolve(rows[0]);
+      }
+    })
+  })
+}

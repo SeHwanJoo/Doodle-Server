@@ -356,4 +356,18 @@ exports.delete = async(req, res, next) => {
   }
 
   return res.r(result);
+};
+
+exports.get = async(req, res, next) => {
+  let result = '';
+  try {
+    const data = {
+      userIdx: req.userIdx,
+      idx:req.params.idx
+    };
+    result = await  doodleModel.get(data);
+  } catch(error) {
+    return next(error);
+  }
+  return res.r(result);
 }
