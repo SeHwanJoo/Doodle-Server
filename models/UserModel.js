@@ -434,7 +434,8 @@ exports.search = (data) => {
       SELECT 
         nickname, 
         description,
-        image
+        image,
+        idx
       FROM users
       WHERE nickname REGEXP ?
       ORDER BY users.doodle_count DESC
