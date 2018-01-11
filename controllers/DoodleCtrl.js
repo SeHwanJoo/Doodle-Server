@@ -335,3 +335,25 @@ exports.search = async(req, res, next) => {
 
   return res.r(result);
 };
+
+
+/*********
+ * 글귀 삭제
+ * @param idx
+ */
+exports.delete = async(req, res, next) => {
+  let result = '';
+
+  try{
+    const data = {
+      idx : req.params.idx,
+      userIdx : req.userIdx
+    }
+
+    result = await doodleModel.delete(data);
+  }catch (error){
+    return next(error);
+  }
+
+  return res.r(result);
+}

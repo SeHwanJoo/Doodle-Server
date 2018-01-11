@@ -50,6 +50,9 @@ module.exports = (router) => {
   router.route('/doodle/all')
     .post(authCtrl.auth ,doodleCtrl.allDoodle);
 
+  router.route('/doodle/delete/:idx')
+    .delete(authCtrl.auth, doodleCtrl.delete);
+
 
   router.route('/search/users/:keyword')
     .get(authCtrl.auth, userCtrl.search);

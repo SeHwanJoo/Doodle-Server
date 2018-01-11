@@ -121,7 +121,8 @@ exports.search = (data) => {
       `
       SELECT 
         doodle.text, 
-        image
+        image,
+        doodle.idx
       FROM doodle
       WHERE doodle.text REGEXP ?
       ORDER BY doodle.like_count DESC
@@ -135,4 +136,21 @@ exports.search = (data) => {
     });
   });
 
+};
+
+exports.delete = (data) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM doodle WHERE idx = ? && user_idx = ?';
+    pool.query(sql, [data.idx, data.userIdx],(err, rows) => {
+      if(err){
+        reject(err);
+      } else{
+        if(rows.affectedRows == 0){
+          reject(1700)
+        }else {
+          resolve();
+        }
+      }
+    });
+  });
 };

@@ -61,6 +61,13 @@
     "description": "Nonexistent data"
   },
 
+  "1700": {
+    "status": 403,
+    "code": 0,
+    "message": "맞지 않는 데이터입니다.",
+    "description": "Nonexistent data"
+  },
+
 
   "9401": {
     "status": 400,
