@@ -221,8 +221,8 @@ exports.scrapList = (userIdx) => {
  */
 exports.likeItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE `like` SET is_read = 1 WHERE doodle_idx = ? && user_idx = ?';
-    pool.query(sql, [alarmData.doodle_idx, alarmData.userIdx], (err, rows) => {
+    const sql ='UPDATE `like` SET is_read = 1 WHERE doodle_idx = ?';
+    pool.query(sql, [alarmData.doodle_idx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -257,7 +257,7 @@ exports.commentItem = (alarmData) => {
 exports.scrapItem = (alarmData) => {
   return new Promise((resolve, reject) => {
     const sql ='UPDATE scraps SET is_read = 1 WHERE idx = ?';
-    pool.query(sql, [alarmData.userIdx], (err, rows) => {
+    pool.query(sql, [alarmData.idx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
