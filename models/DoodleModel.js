@@ -18,11 +18,19 @@ moment.tz.setDefault('Asia/Seoul');
 exports.allDoodle = (doodleData) => {
   return new Promise((resolve, reject) => {
     let sql = "SELECT " +
-      "  doodle.*, " +
+      "  doodle.image, " +
+      "  doodle.text, " +
+      "  doodle.idx, " +
+      "  doodle.comment_count, " +
+      "  doodle.scrap_count, " +
+      "  doodle.like_count, " +
+      "  doodle.user_idx, " +
+      "  users.nickname, " +
       "  users.nickname, " +
       "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
-      "  `like`.doodle_idx AS `like` " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM doodle " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
@@ -58,11 +66,18 @@ exports.myDoodle = (doodleData) => {
   return new Promise((resolve, reject) => {
     const sql =
       "SELECT " +
-      "  doodle.*, " +
+      "  doodle.image, " +
+      "  doodle.text, " +
+      "  doodle.idx, " +
+      "  doodle.comment_count, " +
+      "  doodle.scrap_count, " +
+      "  doodle.like_count, " +
+      "  doodle.user_idx, " +
       "  users.nickname, " +
       "  users.image AS profile, " +
       "  scraps.doodle_idx AS scraps, " +
-      "  `like`.doodle_idx AS `like` " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM doodle " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +

@@ -221,7 +221,8 @@ exports.read = (doodleData) => {
       "  users.image AS profile, " +
       "  doodle.*, " +
       "  scraps.doodle_idx AS scraps, " +
-      "  `like`.doodle_idx AS `like` " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM scraps " +
       "  LEFT JOIN doodle ON doodle.idx = scraps.doodle_idx " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +
