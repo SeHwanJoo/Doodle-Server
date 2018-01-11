@@ -82,19 +82,27 @@ exports.alarmList = async (req, res, next) => {
 
 /*******************
  *  alarm item
- *  @body: {flag, doodle_idx}
+ *  @body: {flag, doodle_idx, idx}
  ********************/
 exports.alarmItem = async (req, res, next) => {
 
   let result = '';
   const alarmData = {
     userIdx: req.userIdx,
-    flag: req.body.flag,
-    doodle_idx: req.body.doodle_idx
+    doodle_idx: req.body.doodle_idx,
+    idx: req.body.idx
   }
+  let flag = parseInt(req.body.flag);
   try {
 
-    result = await alarmModel.item(alarmData);
+    if(flag === 1){
+      result = await alarmModel.likeItem(alarmData);
+    } else if(flag ===2){
+      result = await alarmModel.commentItem(alarmData);
+    } else if(flag === 3){
+      result = await alarmModel.scrapItem(alarmData);
+    }
+
 
   } catch (error) {
     console.log(error);

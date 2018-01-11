@@ -215,13 +215,48 @@ exports.scrapList = (userIdx) => {
 };
 
 /****************
- * 알람 읽기
- * alarmData = {doodle_idx, flag}
+ * 공감알람 읽기
+ * alarmData = {doodle_idx, idx, userIdx}
  */
-exports.item = (alarmData) => {
+exports.likeItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE alarms SET is_read = 1 WHERE doodle_idx = ? && flag = ? && user_idx_alarm = ?';
-    pool.query(sql, [alarmData.doodle_idx, alarmData.flag, alarmData.userIdx], (err, rows) => {
+    const sql ='UPDATE `like` SET is_read = 1 WHERE doodle_idx = ? && user_idx = ?';
+    pool.query(sql, [alarmData.doodle_idx, alarmData.userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+/****************
+ * 댓글알람 읽기
+ * alarmData = {doodle_idx, idx, userIdx}
+ */
+exports.commentItem = (alarmData) => {
+  return new Promise((resolve, reject) => {
+    const sql ='UPDATE comments SET is_read = 1 WHERE idx = ?';
+    pool.query(sql, [alarmData.idx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+
+/****************
+ * 스크랩알람 읽기
+ * alarmData = {doodle_idx, idx}
+ */
+exports.scrapItem = (alarmData) => {
+  return new Promise((resolve, reject) => {
+    const sql ='UPDATE scraps SET is_read = 1 WHERE idx = ?';
+    pool.query(sql, [alarmData.userIdx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
