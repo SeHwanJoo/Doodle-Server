@@ -76,7 +76,7 @@ exports.likeList = (userIdx) => {
       'LEFT JOIN users ' +
       'ON users.idx = `like`.user_idx ' +
       'WHERE doodle.user_idx = ? ' +
-      'ORDER BY `like`.created DESC' ;
+      'ORDER BY `like`.created' ;
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
@@ -90,9 +90,10 @@ exports.likeList = (userIdx) => {
             if (!groups[groupName]) {
               groups[groupName] = [];
             }
-            groups[groupName].nickname=rows[0].nickname;
-            groups[groupName].image=rows[0].image;
-            groups[groupName].created=rows[0].created;
+
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
             if(groups[groupName].count) groups[groupName].count++;
@@ -142,9 +143,9 @@ exports.commentList = (userIdx) => {
             if (!groups[groupName]) {
               groups[groupName] = [];
             }
-            groups[groupName].nickname=rows[0].nickname;
-            groups[groupName].image=rows[0].image;
-            groups[groupName].created=rows[0].created;
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
             groups[groupName].idx = rows[i].idx;
@@ -193,9 +194,9 @@ exports.scrapList = (userIdx) => {
             if (!groups[groupName]) {
               groups[groupName] = [];
             }
-            groups[groupName].nickname=rows[0].nickname;
-            groups[groupName].image=rows[0].image;
-            groups[groupName].created=rows[0].created;
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
             groups[groupName].idx = rows[i].idx;
