@@ -5,6 +5,7 @@ const config = require('../config/config');
 const resMsg = require('../errors.json');
 
 const commentModel = require('../models/CommentModel');
+const timeModel = require('../models/TimeModel');
 
 
 /*******************
@@ -49,9 +50,14 @@ exports.read = async (req, res, next) => {
   let temp2 = '';
 
   try {
-    //TODO 쿼리 합치기
     temp1 = await commentModel.read1(parseInt(req.params.idx));
     temp2 = await  commentModel.read2(parseInt(req.params.idx));
+
+  } catch (error) {
+    return next(error);
+  }
+  try {
+    temp1.comments = await timeModel.timeParsing(temp1.comments);
 
   } catch (error) {
     return next(error);

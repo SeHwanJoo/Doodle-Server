@@ -94,7 +94,8 @@ exports.read1 = (doodle_idx) => {
       "SELECT " +
       "  comments.*, " +
       "  users.nickname, " +
-      "  users.image AS profile " +
+      "  users.image AS profile," +
+      '  date_format(convert_tz(comments.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM comments " +
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ? " +
