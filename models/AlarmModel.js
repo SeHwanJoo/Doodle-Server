@@ -35,7 +35,7 @@ exports.list = (userIdx) => {
         reject(err);
       } else {
         let result = '';
-        if(rows[0]){
+        if (rows[0]) {
           var groups = {};
           for (var i = 0; i < rows.length; i++) {
             var groupName = rows[i].flag + 'kfjdkffd' + rows[i].doodle_idx + 'dfddfdfd' + rows[i].is_read;
@@ -50,7 +50,12 @@ exports.list = (userIdx) => {
           }
           result = [];
           for (var groupName in groups) {
-            result.push({flag: groups[groupName].flag, doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read, nicknames: groups[groupName]});
+            result.push({
+              flag: groups[groupName].flag,
+              doodle_idx: groups[groupName].doodle_idx,
+              is_read: groups[groupName].is_read,
+              nicknames: groups[groupName]
+            });
           }
         }
         resolve(result);
@@ -61,7 +66,7 @@ exports.list = (userIdx) => {
 };
 
 exports.likeList = (userIdx) => {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     const sql =
       'SELECT ' +
       '  `like`.doodle_idx, ' +
@@ -76,13 +81,13 @@ exports.likeList = (userIdx) => {
       'LEFT JOIN users ' +
       'ON users.idx = `like`.user_idx ' +
       'WHERE doodle.user_idx = ? ' +
-      'ORDER BY `like`.created' ;
+      'ORDER BY `like`.created';
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
         let result = '';
-        if(rows[0]){
+        if (rows[0]) {
           var groups = {};
           for (var i = 0; i < rows.length; i++) {
             var groupName = rows[i].is_read + 'kfjdkffd' + rows[i].doodle_idx;
@@ -91,20 +96,22 @@ exports.likeList = (userIdx) => {
               groups[groupName] = [];
             }
 
-            groups[groupName].nickname=rows[i].nickname;
-            groups[groupName].image=rows[i].image;
-            groups[groupName].created=rows[i].created;
+            groups[groupName].nickname = rows[i].nickname;
+            groups[groupName].image = rows[i].image;
+            groups[groupName].created = rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
-            if(groups[groupName].count) groups[groupName].count++;
+            if (groups[groupName].count) groups[groupName].count++;
             else groups[groupName].count = 1;
 
           }
           result = [];
           for (var groupName in groups) {
-            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+            result.push({
+              doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
               nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
-            count:groups[groupName].count, flag:1, idx:-1});
+              count: groups[groupName].count, flag: 1, idx: -1
+            });
           }
         }
         resolve(result);
@@ -114,7 +121,7 @@ exports.likeList = (userIdx) => {
 };
 
 exports.commentList = (userIdx) => {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     const sql =
       'SELECT ' +
       '  comments.doodle_idx, ' +
@@ -129,13 +136,13 @@ exports.commentList = (userIdx) => {
       'LEFT JOIN users ' +
       'ON users.idx = comments.user_idx ' +
       'WHERE doodle.user_idx = ? ' +
-      'ORDER BY comments.created DESC' ;
+      'ORDER BY comments.created DESC';
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
         let result = '';
-        if(rows[0]){
+        if (rows[0]) {
           var groups = {};
           for (var i = 0; i < rows.length; i++) {
             var groupName = rows[i].is_read + 'sdsd' + rows[i].idx;
@@ -143,9 +150,9 @@ exports.commentList = (userIdx) => {
             if (!groups[groupName]) {
               groups[groupName] = [];
             }
-            groups[groupName].nickname=rows[i].nickname;
-            groups[groupName].image=rows[i].image;
-            groups[groupName].created=rows[i].created;
+            groups[groupName].nickname = rows[i].nickname;
+            groups[groupName].image = rows[i].image;
+            groups[groupName].created = rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
             groups[groupName].idx = rows[i].idx;
@@ -153,9 +160,11 @@ exports.commentList = (userIdx) => {
           }
           result = [];
           for (var groupName in groups) {
-            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+            result.push({
+              doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
               nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
-              count:1, flag:2, idx: groups[groupName].idx});
+              count: 1, flag: 2, idx: groups[groupName].idx
+            });
           }
         }
         resolve(result);
@@ -165,7 +174,7 @@ exports.commentList = (userIdx) => {
 };
 
 exports.scrapList = (userIdx) => {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     const sql =
       'SELECT ' +
       '  scraps.doodle_idx, ' +
@@ -180,13 +189,13 @@ exports.scrapList = (userIdx) => {
       'LEFT JOIN users ' +
       'ON users.idx = scraps.user_idx ' +
       'WHERE doodle.user_idx = ? ' +
-      'ORDER BY scraps.created DESC' ;
+      'ORDER BY scraps.created DESC';
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
         let result = '';
-        if(rows[0]){
+        if (rows[0]) {
           var groups = {};
           for (var i = 0; i < rows.length; i++) {
             var groupName = rows[i].is_read + 'sdsd' + rows[i].idx;
@@ -194,9 +203,9 @@ exports.scrapList = (userIdx) => {
             if (!groups[groupName]) {
               groups[groupName] = [];
             }
-            groups[groupName].nickname=rows[i].nickname;
-            groups[groupName].image=rows[i].image;
-            groups[groupName].created=rows[i].created;
+            groups[groupName].nickname = rows[i].nickname;
+            groups[groupName].image = rows[i].image;
+            groups[groupName].created = rows[i].created;
             groups[groupName].doodle_idx = rows[i].doodle_idx;
             groups[groupName].is_read = rows[i].is_read;
             groups[groupName].idx = rows[i].idx;
@@ -204,9 +213,11 @@ exports.scrapList = (userIdx) => {
           }
           result = [];
           for (var groupName in groups) {
-            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+            result.push({
+              doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
               nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
-              count:1, flag:3, idx: groups[groupName].idx});
+              count: 1, flag: 3, idx: groups[groupName].idx
+            });
           }
         }
         resolve(result);
@@ -221,7 +232,7 @@ exports.scrapList = (userIdx) => {
  */
 exports.likeItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE `like` SET is_read = 1 WHERE doodle_idx = ?';
+    const sql = 'UPDATE `like` SET is_read = 1 WHERE doodle_idx = ?';
     pool.query(sql, [alarmData.doodle_idx], (err, rows) => {
       if (err) {
         reject(err);
@@ -229,7 +240,24 @@ exports.likeItem = (alarmData) => {
         resolve(rows);
       }
     });
-  });
+  })
+    .then((context) => {
+      return new Promise((resolve, reject) => {
+        if (context.is_read === 1) {
+          const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
+        } else {
+          resolve(context);
+        }
+      })
+    });
 }
 
 /****************
@@ -238,7 +266,7 @@ exports.likeItem = (alarmData) => {
  */
 exports.commentItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE comments SET is_read = 1 WHERE idx = ?';
+    const sql = 'UPDATE comments SET is_read = 1 WHERE idx = ?';
     pool.query(sql, [alarmData.idx], (err, rows) => {
       if (err) {
         reject(err);
@@ -246,7 +274,24 @@ exports.commentItem = (alarmData) => {
         resolve(rows);
       }
     });
-  });
+  })
+    .then((context) => {
+      return new Promise((resolve, reject) => {
+        if (context.is_read === 1) {
+          const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
+        } else {
+          resolve(context);
+        }
+      })
+    });
 }
 
 
@@ -256,7 +301,7 @@ exports.commentItem = (alarmData) => {
  */
 exports.scrapItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE scraps SET is_read = 1 WHERE idx = ?';
+    const sql = 'UPDATE scraps SET is_read = 1 WHERE idx = ?';
     pool.query(sql, [alarmData.idx], (err, rows) => {
       if (err) {
         reject(err);
@@ -264,18 +309,35 @@ exports.scrapItem = (alarmData) => {
         resolve(rows);
       }
     });
-  });
+  })
+    .then((context) => {
+      return new Promise((resolve, reject) => {
+        if (context.is_read === 1) {
+          const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
+        } else {
+          resolve(context);
+        }
+      })
+    });
 }
 
 exports.fcm = (context) => {
-  return new Promise((resolve, reject) =>{
+  return new Promise((resolve, reject) => {
     var fcm = new FCM(config.fcm.apiKey);
     var fcm_message = {
       to: context.token, // required
       collapse_key: 'test',
       data: {
-        title:'글적',
-        body:context.body,
+        title: '글적',
+        body: context.body,
         type: context.type,
         idx: context.idx
       }
@@ -296,14 +358,14 @@ exports.fcm = (context) => {
 
 exports.count = (userIdx) => {
   return new Promise((resolve, reject) => {
-    const sql ='SELECT COUNT(idx) FROM alarms WHERE is_read = 0 && user_idx_alarm = ? GROUP BY doodle_idx, flag ';
+    const sql = 'SELECT COUNT(idx) FROM alarms WHERE is_read = 0 && user_idx_alarm = ? GROUP BY doodle_idx, flag ';
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
         let count = rows.length;
         let context = {
-          count : count
+          count: count
         }
         resolve(context);
       }
@@ -315,7 +377,7 @@ exports.count = (userIdx) => {
 exports.token = (tokenData) => {
   return new Promise((resolve, reject) => {
     let result;
-    const sql ='UPDATE users SET token = ? WHERE idx = ?';
+    const sql = 'UPDATE users SET token = ? WHERE idx = ?';
     pool.query(sql, [tokenData.token, tokenData.userIdx], (err, rows) => {
       if (err) {
         reject(err);
