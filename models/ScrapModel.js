@@ -173,8 +173,7 @@ exports.unscrap = (scrapData) => {
               reject(context);
             } else {
               context.result = {
-                count: rows[0].scrap_count,
-                user_count: rows[1].scrap_count
+                count: rows[0].scrap_count
               };
               resolve(context);
             }
