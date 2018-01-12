@@ -155,7 +155,7 @@ exports.login = (userData) => {
   ).then(() => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT email, nickname, image AS profile " +
+        "SELECT email, nickname, idx, image AS profile ,description " +
         "FROM users " +
         "WHERE email = ? and pw = ?";
 
@@ -168,7 +168,10 @@ exports.login = (userData) => {
           } else {
             const profile = {
               email: rows[0].email,
-              nickname: rows[0].nickname
+              nickname: rows[0].nickname,
+              profile: rows[0].profile,
+              idx: rows[0].idx,
+              description: rows[0].description
             };
             const token = jwt.sign(profile, config.jwt.cert, {'expiresIn': "10h"});
 
@@ -181,7 +184,19 @@ exports.login = (userData) => {
         }
       });
     });
-  });
+  })
+    .then((result)=> {
+      return new Promise((resolve,  reject) =>{
+        const sql = "UPDATE users SET token = ? WHERE idx = ?";
+        pool.query(sql,[userData.token, result.profile.idx], (err,rows) =>{
+          if(err){
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        })
+      })
+    })
 };
 
 
@@ -418,7 +433,9 @@ exports.search = (data) => {
       `
       SELECT 
         nickname, 
-        description
+        description,
+        image,
+        idx
       FROM users
       WHERE nickname REGEXP ?
       ORDER BY users.doodle_count DESC
@@ -433,3 +450,75 @@ exports.search = (data) => {
     });
   });
 };
+
+exports.other_user = (user_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  users.nickname, " +
+      "  users.image AS profile, " +
+      "  users.description, " +
+      "  users.scrap_count, " +
+      "  users.doodle_count " +
+      "FROM users " +
+      "WHERE idx = ? ";
+    pool.query(sql, user_idx, (err,rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows[0]);
+      }
+    });
+
+  });
+};
+
+exports.other_doodle = (user_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "SELECT " +
+      "  doodle.*, " +
+      "  scraps.doodle_idx AS scraps, " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
+      "FROM doodle " +
+      "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
+      "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
+      "WHERE doodle.user_idx = ? " +
+      "ORDER BY doodle.created DESC ";
+    const data = [user_idx,user_idx,user_idx];
+    pool.query(sql, data, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+
+  });
+};
+
+exports.modify = (modifyData) => {
+  return new Promise((resolve, reject) => {
+    let sql = '';
+    let dataArray = [];
+    console.log(modifyData);
+    if(modifyData.flag === 1){
+      sql = 'UPDATE users SET description = ? WHERE idx = ?';
+      dataArray = [modifyData.description, modifyData.userIdx];
+    } else if(modifyData.flag === 2){
+      sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
+      dataArray = [modifyData.image, modifyData.description, modifyData.userIdx];
+    } else if(modifyData.flag === 3){
+      sql = 'UPDATE users SET image = ?, description = ? WHERE idx = ?';
+      dataArray = [null, modifyData.description, modifyData.userIdx];
+    }
+    pool.query(sql, dataArray, (err,rows) => {
+      if(err) {
+        reject (err);
+      } else {
+        resolve();
+      }
+    })
+  })
+}

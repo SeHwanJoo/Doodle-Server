@@ -60,14 +60,169 @@ exports.list = (userIdx) => {
 
 };
 
+exports.likeList = (userIdx) => {
+  return new Promise((resolve,reject) => {
+    const sql =
+      'SELECT ' +
+      '  `like`.doodle_idx, ' +
+      '  `like`.is_read, ' +
+      '  date_format(convert_tz(`like`.created, "+00:00", "+00:00"), "%Y-%m-%d-%T") AS created, ' +
+      '  `like`.idx, ' +
+      '  users.nickname,' +
+      '  users.image ' +
+      'FROM `like` ' +
+      'LEFT JOIN doodle ' +
+      'ON doodle.idx = `like`.doodle_idx ' +
+      'LEFT JOIN users ' +
+      'ON users.idx = `like`.user_idx ' +
+      'WHERE doodle.user_idx = ? ' +
+      'ORDER BY `like`.created' ;
+    pool.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        let result = '';
+        if(rows[0]){
+          var groups = {};
+          for (var i = 0; i < rows.length; i++) {
+            var groupName = rows[i].is_read + 'kfjdkffd' + rows[i].doodle_idx;
+
+            if (!groups[groupName]) {
+              groups[groupName] = [];
+            }
+
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
+            groups[groupName].doodle_idx = rows[i].doodle_idx;
+            groups[groupName].is_read = rows[i].is_read;
+            if(groups[groupName].count) groups[groupName].count++;
+            else groups[groupName].count = 1;
+
+          }
+          result = [];
+          for (var groupName in groups) {
+            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+              nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
+            count:groups[groupName].count, flag:1, idx:-1});
+          }
+        }
+        resolve(result);
+      }
+    });
+  });
+};
+
+exports.commentList = (userIdx) => {
+  return new Promise((resolve,reject) => {
+    const sql =
+      'SELECT ' +
+      '  comments.doodle_idx, ' +
+      '  comments.is_read, ' +
+      '  date_format(convert_tz(comments.created, "+00:00", "+00:00"), "%Y-%m-%d-%T") AS created, ' +
+      '  comments.idx, ' +
+      '  users.nickname,' +
+      '  users.image ' +
+      'FROM comments ' +
+      'LEFT JOIN doodle ' +
+      'ON doodle.idx = comments.doodle_idx ' +
+      'LEFT JOIN users ' +
+      'ON users.idx = comments.user_idx ' +
+      'WHERE doodle.user_idx = ? ' +
+      'ORDER BY comments.created DESC' ;
+    pool.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        let result = '';
+        if(rows[0]){
+          var groups = {};
+          for (var i = 0; i < rows.length; i++) {
+            var groupName = rows[i].is_read + 'sdsd' + rows[i].idx;
+
+            if (!groups[groupName]) {
+              groups[groupName] = [];
+            }
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
+            groups[groupName].doodle_idx = rows[i].doodle_idx;
+            groups[groupName].is_read = rows[i].is_read;
+            groups[groupName].idx = rows[i].idx;
+
+          }
+          result = [];
+          for (var groupName in groups) {
+            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+              nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
+              count:1, flag:2, idx: groups[groupName].idx});
+          }
+        }
+        resolve(result);
+      }
+    });
+  });
+};
+
+exports.scrapList = (userIdx) => {
+  return new Promise((resolve,reject) => {
+    const sql =
+      'SELECT ' +
+      '  scraps.doodle_idx, ' +
+      '  scraps.is_read, ' +
+      '  date_format(convert_tz(scraps.created, "+00:00", "+00:00"), "%Y-%m-%d-%T") AS created, ' +
+      '  scraps.idx, ' +
+      '  users.nickname,' +
+      '  users.image ' +
+      'FROM scraps ' +
+      'LEFT JOIN doodle ' +
+      'ON doodle.idx = scraps.doodle_idx ' +
+      'LEFT JOIN users ' +
+      'ON users.idx = scraps.user_idx ' +
+      'WHERE doodle.user_idx = ? ' +
+      'ORDER BY scraps.created DESC' ;
+    pool.query(sql, userIdx, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        let result = '';
+        if(rows[0]){
+          var groups = {};
+          for (var i = 0; i < rows.length; i++) {
+            var groupName = rows[i].is_read + 'sdsd' + rows[i].idx;
+
+            if (!groups[groupName]) {
+              groups[groupName] = [];
+            }
+            groups[groupName].nickname=rows[i].nickname;
+            groups[groupName].image=rows[i].image;
+            groups[groupName].created=rows[i].created;
+            groups[groupName].doodle_idx = rows[i].doodle_idx;
+            groups[groupName].is_read = rows[i].is_read;
+            groups[groupName].idx = rows[i].idx;
+
+          }
+          result = [];
+          for (var groupName in groups) {
+            result.push({ doodle_idx: groups[groupName].doodle_idx, is_read: groups[groupName].is_read,
+              nickname: groups[groupName].nickname, image: groups[groupName].image, created: groups[groupName].created,
+              count:1, flag:3, idx: groups[groupName].idx});
+          }
+        }
+        resolve(result);
+      }
+    });
+  });
+};
+
 /****************
- * 알람 읽기
- * alarmData = {doodle_idx, flag}
+ * 공감알람 읽기
+ * alarmData = {doodle_idx, idx, userIdx}
  */
-exports.item = (alarmData) => {
+exports.likeItem = (alarmData) => {
   return new Promise((resolve, reject) => {
-    const sql ='UPDATE alarms SET is_read = 1 WHERE doodle_idx = ? && flag = ? && user_idx_alarm = ?';
-    pool.query(sql, [alarmData.doodle_idx, alarmData.flag, alarmData.userIdx], (err, rows) => {
+    const sql ='UPDATE `like` SET is_read = 1 WHERE doodle_idx = ?';
+    pool.query(sql, [alarmData.doodle_idx], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -77,20 +232,62 @@ exports.item = (alarmData) => {
   });
 }
 
-exports.fcm = (token, data) => {
+/****************
+ * 댓글알람 읽기
+ * alarmData = {doodle_idx, idx, userIdx}
+ */
+exports.commentItem = (alarmData) => {
+  return new Promise((resolve, reject) => {
+    const sql ='UPDATE comments SET is_read = 1 WHERE idx = ?';
+    pool.query(sql, [alarmData.idx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+
+/****************
+ * 스크랩알람 읽기
+ * alarmData = {doodle_idx, idx}
+ */
+exports.scrapItem = (alarmData) => {
+  return new Promise((resolve, reject) => {
+    const sql ='UPDATE scraps SET is_read = 1 WHERE idx = ?';
+    pool.query(sql, [alarmData.idx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+exports.fcm = (context) => {
   return new Promise((resolve, reject) =>{
     var fcm = new FCM(config.fcm.apiKey);
     var fcm_message = {
-      to: token, // required
+      to: context.token, // required
       collapse_key: 'test',
-      data: data
+      data: {
+        title:'글적',
+        body:context.body,
+        type: context.type,
+        idx: context.idx
+      }
     };
     fcm.send(fcm_message, function (err, messageId) {
       if (err) {
         console.log("Something has gone wrong!");
-        reject(err);
+        context.err = err;
+        resolve(context);
       } else {
-        resolve(messageId);
+        context.err = err;
+        resolve(context);
         console.log("Sent with message ID: ", messageId);
       }
     });
@@ -114,3 +311,18 @@ exports.count = (userIdx) => {
   })
 
 }
+
+exports.token = (tokenData) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    const sql ='UPDATE users SET token = ? WHERE idx = ?';
+    pool.query(sql, [tokenData.token, tokenData.userIdx], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  })
+
+};

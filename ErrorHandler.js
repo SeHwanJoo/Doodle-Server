@@ -24,8 +24,8 @@ module.exports = (app) => {
     const response_error = errors[err];
     response_error.miss_param = miss_param ? miss_param : undefined;
 
-    return res.status(response_error.status).json([
+    return res.status(response_error.status).json(
       response_error
-    ]);
+    );
   });
 };

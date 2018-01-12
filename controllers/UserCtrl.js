@@ -75,12 +75,9 @@ exports.check = async (req, res, next) => {
     const userData = req.body.email;
     result = await userModel.check(userData);
   } catch (error) {
-    // console.log(error); // 1401
     if (isNaN(error)) {
-      // console.log(error);
       return res.status(500).json(resMsg[9500]);
     } else {
-      // console.log(error);
       return res.status(409).json(resMsg[1401]);
     }
   }
@@ -104,7 +101,8 @@ exports.login = async (req, res, next) => {
   try {
     const userData = {
       email: req.body.email,
-      pw: config.do_cipher(req.body.pw)
+      pw: config.do_cipher(req.body.pw),
+      token: req.body.token ? req.body.token : 'token'
     };
 
     result = await userModel.login(userData);
@@ -347,3 +345,49 @@ exports.search = async(req, res, next) => {
 
   return res.r(result);
 };
+
+exports.other = async(req, res, next) => {
+  let result = {};
+
+  try{
+    const user_idx = parseInt(req.params.idx);
+
+    result.user = await userModel.other_user(user_idx);
+    result.doodle = await userModel.other_doodle(user_idx);
+
+  } catch (error){
+    return next(error);
+  }
+
+  return res.r(result);
+};
+
+
+/*********
+ * 사진, 설명 변경
+ * @body image, flag, description
+ */
+
+
+exports.modify = async(req, res, next) => {
+  let result = '';
+  let image;
+  console.log(req.body);
+  if (!req.file) { // 이미지가 없는 경우
+    image = null;
+  } else {
+    image = req.file.location;
+  }
+  try {
+    const modifyData = {
+      image: image,
+      description: req.body.description,
+      flag: parseInt(req.body.flag),
+      userIdx : req.userIdx
+    }
+    result = await userModel.modify(modifyData);
+  } catch(error){
+    return next(error);
+  }
+  return res.r(result);
+}

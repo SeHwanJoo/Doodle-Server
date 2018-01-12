@@ -6,6 +6,7 @@ const pool = mysql.createPool(DBConfig);
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
+const alarmModel = require('./AlarmModel');
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -63,8 +64,7 @@ exports.scrap = (scrapData) => {
       })
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "SELECT scrap_count FROM doodle WHERE idx = ? UNION" +
-            " SELECT scrap_count FROM users WHERE idx = ?";
+          const sql = "SELECT scrap_count FROM doodle WHERE idx = ? ";
           context.conn.query(sql, [scrapData.doodle_idx, scrapData.user_idx], (err, rows) => {
             if (err) {
               context.error = err;
@@ -72,7 +72,7 @@ exports.scrap = (scrapData) => {
             } else {
               context.result = {
                 count: rows[0].scrap_count,
-                user_count: rows[1].scrap_count
+                idx: scrapData.doodle_idx
               };
               resolve(context);
             }
@@ -80,27 +80,30 @@ exports.scrap = (scrapData) => {
         })
       })
       .then((context) => {
-        return new Promise((resolve, reject) => {
-          const sql = "INSERT INTO alarms SET ?";
-          let insertData = {
-            flag: 2,
-            user_idx: scrapData.user_idx,
-            doodle_idx: scrapData.doodle_idx
-          }
-          context.conn.query(sql, insertData, (err, rows) => {
-            if (err) {
+        return new Promise((resolve,reject) => {
+          const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
+            "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
+          context.conn.query(sql, [scrapData.user_idx, scrapData.doodle_idx], (err, rows) => {
+            if(err) {
               context.error = err;
               reject(context);
             } else {
+              context.fcm = {};
+              context.fcm.token = rows[1].token;
+              context.fcm.body =  rows[0].token + '님이 회원님의 글을 담아갔습니다.';
+              context.fcm.type = 1000;
+              context.fcm.idx = scrapData.doodle_idx;
+              context.userIdx = rows[1].idx;
               resolve(context);
             }
-          });
+          })
         })
       })
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
         resolve(context.result);
+        return alarmModel.fcm(context.fcm);
       })
       .catch((context) => {
         context.conn.rollback(() => {
@@ -123,7 +126,6 @@ exports.unscrap = (scrapData) => {
               context.error = err;
               reject(context);
             } else {
-              //console.log(rows);
               if (rows.affectedRows === 0) {
                 context.error = 'twice unscrap';
                 reject(context);
@@ -202,7 +204,8 @@ exports.read = (doodleData) => {
       "  users.image AS profile, " +
       "  doodle.*, " +
       "  scraps.doodle_idx AS scraps, " +
-      "  `like`.doodle_idx AS `like` " +
+      "  `like`.doodle_idx AS `like`, " +
+      '  date_format(convert_tz(doodle.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM scraps " +
       "  LEFT JOIN doodle ON doodle.idx = scraps.doodle_idx " +
       "  LEFT JOIN users ON doodle.user_idx = users.idx " +

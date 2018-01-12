@@ -38,13 +38,17 @@ exports.allDoodle = async (req, res, next) => {
   return res.r(result);
 };
 
+/*******************
+ *  request doodle
+ *  @params: {idx}
+ ********************/
 exports.other = async (req, res, next) => {
 
-  if (!req.body.idx) {
+  if (!req.params.idx) {
     return res.status(400).end();
   }
   let result = '';
-  let idx = parseInt(req.body.flag);
+  let idx = parseInt(req.params.idx);
 
   const doodleData = {
     idx: idx,
@@ -335,3 +339,39 @@ exports.search = async(req, res, next) => {
 
   return res.r(result);
 };
+
+
+/*********
+ * 글귀 삭제
+ * @param idx
+ */
+exports.delete = async(req, res, next) => {
+  let result = '';
+
+  try{
+    const data = {
+      idx : req.params.idx,
+      userIdx : req.userIdx
+    }
+
+    result = await doodleModel.delete(data);
+  }catch (error){
+    return next(error);
+  }
+
+  return res.r(result);
+};
+
+exports.get = async(req, res, next) => {
+  let result = '';
+  try {
+    const data = {
+      userIdx: req.userIdx,
+      idx:req.params.idx
+    };
+    result = await  doodleModel.get(data);
+  } catch(error) {
+    return next(error);
+  }
+  return res.r(result);
+}

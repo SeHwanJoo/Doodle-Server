@@ -5,6 +5,7 @@ const config = require('../config/config');
 const resMsg = require('../errors.json');
 
 const commentModel = require('../models/CommentModel');
+const timeModel = require('../models/TimeModel');
 
 
 /*******************
@@ -44,16 +45,29 @@ exports.read = async (req, res, next) => {
   if (!req.params.idx) {
     return res.status(400).end();
   }
-  let result = '';
-  const readData = {
-    userIdx: req.userIdx,
-    doodle_idx:parseInt(req.params.idx)
-  }
+  let result = {};
+  let temp1 = '';
+  let temp2 = '';
 
   try {
-    result = await commentModel.read(readData);
+    temp1 = await commentModel.read1(parseInt(req.params.idx));
+    temp2 = await  commentModel.read2(parseInt(req.params.idx));
+
   } catch (error) {
     return next(error);
   }
+  try {
+    temp1.comments = await timeModel.timeParsing(temp1.comments);
+
+  } catch (error) {
+    return next(error);
+  }
+  result.comments = temp1.comments;
+  // for(let i=0 ; i<temp1.length ; i++){
+  //   result.comments[i] = temp1[i]
+  // }
+  result.doodle = temp2;
+
+
   res.r(result);
 };

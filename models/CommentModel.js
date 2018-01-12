@@ -3,6 +3,7 @@
 const mysql = require('mysql');
 const DBConfig = require('./../config/DBConfig');
 const pool = mysql.createPool(DBConfig);
+const alarmModel = require('./AlarmModel');
 
 const transactionWrapper = require('./TransactionWrapper');
 const moment = require('moment');
@@ -45,27 +46,31 @@ exports.write = (writeData) => {
         })
       })
       .then((context) => {
-        return new Promise((resolve, reject) => {
-          const sql = "INSERT INTO alarms SET ?";
-          let insertData = {
-            flag: 1,
-            user_idx: writeData.user_idx,
-            doodle_idx: writeData.doodle_idx
-          }
-          context.conn.query(sql, insertData, (err, rows) => {
-            if (err) {
+        return new Promise((resolve,reject) => {
+          const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
+            "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
+          context.conn.query(sql, [writeData.user_idx, writeData.doodle_idx], (err, rows) => {
+            if(err) {
               context.error = err;
               reject(context);
             } else {
+              context.fcm = {};
+              context.fcm.token = rows[1].token;
+              context.fcm.body =  rows[0].token + '님이 회원님의 글에 댓글을 남겼습니다.';
+              context.userIdx = rows[1].idx;
+              context.fcm.idx = writeData.doodle_idx;
+              context.fcm.type = 1000;
               resolve(context);
             }
-          });
+          })
         })
       })
+
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
         resolve(context.result);
+        return alarmModel.fcm(context.fcm);
       })
       .catch((context) => {
 
@@ -81,19 +86,21 @@ exports.write = (writeData) => {
   });
 };
 
-exports.read = (readData) => {
+
+exports.read1 = (doodle_idx) => {
   return new Promise((resolve, reject) => {
     const context = {};
     const sql =
       "SELECT " +
       "  comments.*, " +
       "  users.nickname, " +
-      "  users.image AS profile " +
+      "  users.image AS profile," +
+      '  date_format(convert_tz(comments.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created ' +
       "FROM comments " +
       "  LEFT JOIN users ON comments.user_idx = users.idx " +
       "WHERE comments.doodle_idx = ? " +
       "ORDER BY created DESC ";
-    pool.query(sql, readData.doodle_idx, (err, rows) => {
+    pool.query(sql, doodle_idx, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -101,29 +108,33 @@ exports.read = (readData) => {
         resolve(context);
       }
     });
-  })
-    .then((context) => {
-      return new Promise((resolve, reject) => {
-        const sql =
-          "SELECT " +
-          "  doodle.*, " +
-          "  users.nickname, " +
-          "  users.image AS profile, " +
-          "  scraps.doodle_idx AS scraps, " +
-          "  `like`.doodle_idx AS `like` " +
-          "FROM doodle " +
-          "  LEFT JOIN users ON doodle.user_idx = users.idx " +
-          "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
-          "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
-          "WHERE doodle.idx = ? ";
-        pool.query(sql, [readData.userIdx, readData.userIdx, readData.doodle_idx], (err, rows) => {
-          if (err) {
-            reject(err);
-          } else {
-            context.doodle = rows[0];
-            resolve(context);
-          }
-        })
-      })
-    })
+  });
 };
+
+exports.read2 = (doodle_idx) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      `
+      SELECT
+        u.nickname,
+        u.image,
+        d.scrap_count,
+        (SELECT COUNT(idx)
+         FROM comments
+         WHERE doodle_idx = ?) AS comment_count,
+        d.like_count,
+        date_format(convert_tz(d.created, "+00:00", "+00:00"), "%Y년 %m월 %d일") AS created
+      FROM doodle AS d
+        LEFT JOIN users AS u ON d.user_idx = u.idx
+      WHERE d.idx = ?;
+      `;
+    pool.query(sql, [doodle_idx, doodle_idx], (err, rows) => {
+      if(err){
+        reject(err);
+      } else {
+        resolve(rows[0]);
+      }
+    });
+  });
+};
+

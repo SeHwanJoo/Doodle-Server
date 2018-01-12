@@ -31,6 +31,8 @@ module.exports = (router) => {
     .put(authCtrl.auth, userCtrl.edit)
     .delete(authCtrl.auth, userCtrl.delUser);
 
+  router.route('/users/modify')
+    .put(authCtrl.auth, imageCtrl.uploadSingle, userCtrl.modify);
 
 
   router.route('/users/find/id')
@@ -42,22 +44,32 @@ module.exports = (router) => {
   router.route('/users/edit/pw')
     .post(userCtrl.editPW);
 
+  router.route('/users/other/:idx')
+    .get(authCtrl.auth, userCtrl.other);
+
   router.route('/doodle/all')
     .post(authCtrl.auth ,doodleCtrl.allDoodle);
+
+  router.route('/doodle/delete/:idx')
+    .delete(authCtrl.auth, doodleCtrl.delete);
 
 
   router.route('/search/users/:keyword')
     .get(authCtrl.auth, userCtrl.search);
+
   router.route('/search/doodle/:keyword')
     .get(authCtrl.auth, doodleCtrl.search);
 
   //글작성
   router.route('/doodle/post')
     .post(authCtrl.auth, imageCtrl.uploadSingle, postCtrl.post);
+
+  router.route('/doodle/get/:idx')
+    .get(authCtrl.auth, doodleCtrl.get);
+
   router.route('/doodle/get')
     .get(postCtrl.get);
-  router.route('/doodle/other')
-    .post(authCtrl.auth, doodleCtrl.other);
+
 
 
 
@@ -84,6 +96,9 @@ module.exports = (router) => {
 
   router.route('/alarm/count')
     .get(authCtrl.auth, alarmCtrl.alarmCount);
+
+  router.route('/alarm/token')
+    .post(authCtrl.auth, alarmCtrl.token);
 
   //alarm test
   // router.route('/alarm/test')

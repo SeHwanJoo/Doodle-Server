@@ -11,12 +11,12 @@ exports.post = async(req, res, next) => {
 	let user_idx;
 	let result = '';
 
-	let image;
-  	if (!req.file) { // 이미지가 없는 경우
-    	image = null;
-  	} else {
-   	 	image = req.file.location;
-  	}
+  let image;
+  if (!req.file) { // 이미지가 없는 경우
+    image = null;
+  } else {
+    image = req.file.location;
+  }
 	try {
 		const postData = {
 			text : req.body.text,
