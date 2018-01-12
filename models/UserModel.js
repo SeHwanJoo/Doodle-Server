@@ -502,7 +502,7 @@ exports.modify = (modifyData) => {
   return new Promise((resolve, reject) => {
     let sql = '';
     let dataArray = [];
-    console.log(modifyData);
+    modifyData.description = modifyData.description.replace(/"/gi, "");
     if(modifyData.flag === 1){
       sql = 'UPDATE users SET description = ? WHERE idx = ?';
       dataArray = [modifyData.description, modifyData.userIdx];

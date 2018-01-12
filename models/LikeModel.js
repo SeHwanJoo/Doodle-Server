@@ -49,17 +49,17 @@ exports.like = (likeData) => {
         })
       })
       .then((context) => {
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
             "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
           context.conn.query(sql, [likeData.user_idx, likeData.doodle_idx], (err, rows) => {
-            if(err) {
+            if (err) {
               context.error = err;
               reject(context);
             } else {
               context.fcm = {};
               context.fcm.token = rows[1].token;
-              context.fcm.body =  rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
+              context.fcm.body = rows[0].token + '님이 회원님의 글에 좋아요를 눌렀습니다.';
               context.fcm.type = 1000;
               context.fcm.idx = likeData.doodle_idx;
               context.userIdx = rows[1].idx;
@@ -86,6 +86,44 @@ exports.like = (likeData) => {
           });
         })
       })
+      .then((context) => {
+        return new Promise((resolve, reject) => {
+          const sql = "SELECT is_read FROM `like` WHERE doodle_idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.is_read = 1;
+
+              for (let i = 0; i < rows.length; i++) {
+                if (rows[i].is_read === 0) {
+                  context.is_read = 0;
+                  break;
+                }
+              }
+              resolve(context);
+            }
+          });
+        })
+      })
+      .then((context) => {
+        return new Promise((resolve, reject) => {
+          if (context.is_read === 1) {
+            const sql = "UPDATE users SET alarm_count = alarm_count + 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+            context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+              if (err) {
+                context.error = err;
+                reject(context);
+              } else {
+                resolve(context);
+              }
+            });
+          } else {
+            resolve(context);
+          }
+        })
+      })
       .then(transactionWrapper.commitTransaction)
       .then((context) => {
         context.conn.release();
@@ -105,6 +143,44 @@ exports.unlike = (likeData) => {
   return new Promise((resolve, reject) => {
     transactionWrapper.getConnection(pool)
       .then(transactionWrapper.beginTransaction)
+      .then((context) => {
+        return new Promise((resolve, reject) => {
+          const sql = "SELECT is_read FROM `like` WHERE doodle_idx = ?";
+          context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              context.is_read = 1;
+
+              for (let i = 0; i < rows.length; i++) {
+                if (rows[i].is_read === 0) {
+                  context.is_read = 0;
+                  break;
+                }
+              }
+              resolve(context);
+            }
+          });
+        })
+      })
+      .then((context) => {
+        return new Promise((resolve, reject) => {
+          if (context.is_read === 1) {
+            const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+            context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
+              if (err) {
+                context.error = err;
+                reject(context);
+              } else {
+                resolve(context);
+              }
+            });
+          } else {
+            resolve(context);
+          }
+        })
+      })
       .then((context) => {
         return new Promise((resolve, reject) => {
           const sql = "DELETE FROM `like` WHERE doodle_idx = ? && user_idx = ?";

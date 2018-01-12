@@ -46,6 +46,19 @@ exports.write = (writeData) => {
         })
       })
       .then((context) => {
+        return new Promise((resolve, reject) => {
+          const sql = "UPDATE users SET alarm_count = alarm_count + 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          context.conn.query(sql, writeData.doodle_idx, (err, rows) => {
+            if (err) {
+              context.error = err;
+              reject(context);
+            } else {
+              resolve(context);
+            }
+          });
+        })
+      })
+      .then((context) => {
         return new Promise((resolve,reject) => {
           const sql = "SELECT users.nickname AS token, users.idx FROM users WHERE users.idx = ? " +
             "UNION SELECT users.token,users.idx FROM doodle LEFT JOIN users ON doodle.user_idx = users.idx WHERE doodle.idx = ? ";
