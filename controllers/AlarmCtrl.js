@@ -124,23 +124,16 @@ exports.alarmItem = async (req, res, next) => {
 
 
 exports.alarmCount = async (req, res, next) => {
-  let result = {};
-  let temp1 = '';
-  let temp2 = '';
-  let temp3 = '';
+  let result = '';
   try {
 
-    temp1 = await alarmModel.likeList(req.userIdx);
-    temp2 = await alarmModel.commentList(req.userIdx);
-    temp3 = await alarmModel.scrapList(req.userIdx);
+    result = await alarmModel.count(req.userIdx);
 
   } catch (error) {
     console.log(error);
     return next(error);
   }
-  result.count = temp1.length;
-  result.count += temp2.length;
-  result.count += temp3.length;
+
   return res.r(result);
 };
 

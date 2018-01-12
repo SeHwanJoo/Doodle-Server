@@ -358,7 +358,7 @@ exports.fcm = (context) => {
 
 exports.count = (userIdx) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT COUNT(idx) FROM alarms WHERE is_read = 0 && user_idx_alarm = ? GROUP BY doodle_idx, flag ';
+    const sql = 'SELECT alarm_count FROM users WHERE idx = ? ';
     pool.query(sql, userIdx, (err, rows) => {
       if (err) {
         reject(err);
