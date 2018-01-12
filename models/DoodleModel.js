@@ -49,7 +49,6 @@ exports.allDoodle = (doodleData) => {
     } else if (doodleData.flag === 2) {
       timeArray.push(moment().format('YYYY-MM-DD 00:00:00'), moment().format('YYYY-MM-DD HH:mm:ss'));
     }
-    //console.log(timeArray);
     pool.query(sql, timeArray, (err, rows) => {
       if (err) {
         reject(err);

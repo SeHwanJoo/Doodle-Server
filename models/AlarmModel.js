@@ -280,7 +280,6 @@ exports.fcm = (context) => {
         idx: context.idx
       }
     };
-    console.log(fcm_message);
     fcm.send(fcm_message, function (err, messageId) {
       if (err) {
         console.log("Something has gone wrong!");

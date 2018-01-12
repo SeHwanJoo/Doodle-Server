@@ -75,12 +75,9 @@ exports.check = async (req, res, next) => {
     const userData = req.body.email;
     result = await userModel.check(userData);
   } catch (error) {
-    // console.log(error); // 1401
     if (isNaN(error)) {
-      // console.log(error);
       return res.status(500).json(resMsg[9500]);
     } else {
-      // console.log(error);
       return res.status(409).json(resMsg[1401]);
     }
   }

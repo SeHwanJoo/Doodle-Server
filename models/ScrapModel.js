@@ -70,7 +70,6 @@ exports.scrap = (scrapData) => {
               context.error = err;
               reject(context);
             } else {
-              console.log(rows);
               context.result = {
                 count: rows[0].scrap_count,
                 idx: scrapData.doodle_idx
@@ -127,7 +126,6 @@ exports.unscrap = (scrapData) => {
               context.error = err;
               reject(context);
             } else {
-              //console.log(rows);
               if (rows.affectedRows === 0) {
                 context.error = 'twice unscrap';
                 reject(context);
