@@ -18,7 +18,7 @@ const timeModle = require('../models/TimeModel');
  ********************/
 exports.alarmList = async (req, res, next) => {
 
-  let temp = '';
+  let temp = [];
   let temp1 = '';
   let temp2 = '';
   let temp3 = '';
@@ -33,48 +33,58 @@ exports.alarmList = async (req, res, next) => {
     console.log(error);
     return next(error)
   }
-  temp = temp1.concat(temp2);
-  temp = temp.concat(temp3);
-  temp.sort((a,b)=>{
-    return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
-  })
-
-  try{
-    temp = await timeModle.timeParsing(temp);
-  } catch (error) {
-    console.log(error);
-    return next(error)
+  for(var i=0; i<temp1.length;i++){
+    temp.push(temp1[i]);
   }
+  for(var i=0; i<temp2.length;i++){
+    temp.push(temp2[i]);
+  }
+  for(var i=0; i<temp3.length;i++){
+    temp.push(temp3[i]);
+  }
+  if (temp.length !== 0) {
+    temp.sort((a, b) => {
+      return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
+    })
 
-  var groups1 = [];
-  var groups2 = [];
-  for (var i = 0; i < temp.length; i++) {
-
-    if(temp[i].is_read === 0){
-      groups1.push({
-        flag: temp[i].flag,
-        image: temp[i].image,
-        created: temp[i].created,
-        doodle_idx: temp[i].doodle_idx,
-        nickname: temp[i].nickname,
-        count: temp[i].count,
-        idx: temp[i].idx
-      })
-    } else{
-      groups2.push ({
-        flag: temp[i].flag,
-        image: temp[i].image,
-        created: temp[i].created,
-        doodle_idx: temp[i].doodle_idx,
-        nickname: temp[i].nickname,
-        count: temp[i].count,
-        idx: temp[i].idx
-      })
+    try {
+      temp = await timeModle.timeParsing(temp);
+    } catch (error) {
+      console.log(error);
+      return next(error)
     }
-  }
 
-  result.not_read = groups1;
-  result.is_read = groups2;
+    var groups1 = [];
+    var groups2 = [];
+    for (var i = 0; i < temp.length; i++) {
+
+      if (temp[i].is_read === 0) {
+        groups1.push({
+          flag: temp[i].flag,
+          image: temp[i].image,
+          created: temp[i].created,
+          doodle_idx: temp[i].doodle_idx,
+          nickname: temp[i].nickname,
+          count: temp[i].count,
+          idx: temp[i].idx
+        })
+      } else {
+        groups2.push({
+          flag: temp[i].flag,
+          image: temp[i].image,
+          created: temp[i].created,
+          doodle_idx: temp[i].doodle_idx,
+          nickname: temp[i].nickname,
+          count: temp[i].count,
+          idx: temp[i].idx
+        })
+      }
+    }
+
+    result.not_read = groups1;
+    result.is_read = groups2;
+
+  }
 
 
   return res.r(result);
@@ -95,11 +105,11 @@ exports.alarmItem = async (req, res, next) => {
   let flag = parseInt(req.body.flag);
   try {
 
-    if(flag === 1){
+    if (flag === 1) {
       result = await alarmModel.likeItem(alarmData);
-    } else if(flag ===2){
+    } else if (flag === 2) {
       result = await alarmModel.commentItem(alarmData);
-    } else if(flag === 3){
+    } else if (flag === 3) {
       result = await alarmModel.scrapItem(alarmData);
     }
 
@@ -113,7 +123,7 @@ exports.alarmItem = async (req, res, next) => {
 };
 
 
-exports.alarmCount = async(req, res, next) => {
+exports.alarmCount = async (req, res, next) => {
   let result = {};
   let temp1 = '';
   let temp2 = '';
@@ -129,17 +139,17 @@ exports.alarmCount = async(req, res, next) => {
     return next(error);
   }
   result.count = temp1.length;
-  result.count +=temp2.length;
+  result.count += temp2.length;
   result.count += temp3.length;
   return res.r(result);
 };
 
-exports.token = async(req, res, next) => {
+exports.token = async (req, res, next) => {
   let result = '';
   try {
     const tokenData = {
-      userIdx : req.userIdx,
-      token : req.body.token
+      userIdx: req.userIdx,
+      token: req.body.token
     };
 
     result = await alarmModel.token(tokenData);
