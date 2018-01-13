@@ -350,7 +350,7 @@ exports.delete = async(req, res, next) => {
 
   try{
     const data = {
-      idx : req.params.idx,
+      idx : parseInt(req.params.idx),
       userIdx : req.userIdx
     }
 
