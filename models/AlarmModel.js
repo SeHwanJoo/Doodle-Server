@@ -241,21 +241,22 @@ exports.likeItem = (alarmData) => {
       }
     });
   })
-    .then((context) => {
+    .then((result) => {
       return new Promise((resolve, reject) => {
-        if (context.is_read === 1) {
+        if(result.changedRows!== 0){
           const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
-          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+          pool.query(sql, alarmData.doodle_idx, (err, rows) => {
             if (err) {
-              context.error = err;
-              reject(context);
+              result.error = err;
+              reject(result);
             } else {
-              resolve(context);
+              resolve(result);
             }
           });
-        } else {
-          resolve(context);
+        } else{
+          resolve(result);
         }
+
       })
     });
 }
@@ -275,20 +276,20 @@ exports.commentItem = (alarmData) => {
       }
     });
   })
-    .then((context) => {
+    .then((result) => {
       return new Promise((resolve, reject) => {
-        if (context.is_read === 1) {
+        if(result.changedRows!== 0){
           const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
-          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+          pool.query(sql, alarmData.doodle_idx, (err, rows) => {
             if (err) {
-              context.error = err;
-              reject(context);
+              result.error = err;
+              reject(result);
             } else {
-              resolve(context);
+              resolve(result);
             }
           });
-        } else {
-          resolve(context);
+        } else{
+          resolve(result);
         }
       })
     });
@@ -310,20 +311,20 @@ exports.scrapItem = (alarmData) => {
       }
     });
   })
-    .then((context) => {
+    .then((result) => {
       return new Promise((resolve, reject) => {
-        if (context.is_read === 1) {
+        if(result.changedRows!== 0){
           const sql = "UPDATE users SET alarm_count = alarm_count - 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
-          context.conn.query(sql, alarmData.doodle_idx, (err, rows) => {
+          pool.query(sql, alarmData.doodle_idx, (err, rows) => {
             if (err) {
-              context.error = err;
-              reject(context);
+              result.error = err;
+              reject(result);
             } else {
-              resolve(context);
+              resolve(result);
             }
           });
-        } else {
-          resolve(context);
+        } else{
+          resolve(result);
         }
       })
     });
@@ -363,10 +364,9 @@ exports.count = (userIdx) => {
       if (err) {
         reject(err);
       } else {
-        let count = rows.length;
         let context = {
-          count: count
-        }
+          count: rows[0].alarm_count
+        };
         resolve(context);
       }
     });
