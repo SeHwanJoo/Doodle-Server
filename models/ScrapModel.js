@@ -51,7 +51,7 @@ exports.scrap = (scrapData) => {
       })
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "UPDATE users SET scrap_count = scrap_count+1 WHERE (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          const sql = "UPDATE users SET scrap_count = scrap_count+1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
           context.conn.query(sql, scrapData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
@@ -177,7 +177,7 @@ exports.unscrap = (scrapData) => {
       })
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "UPDATE users SET scrap_count = scrap_count+1 WHERE (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
+          const sql = "UPDATE users SET scrap_count = scrap_count+1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
           context.conn.query(sql, scrapData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
