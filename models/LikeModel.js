@@ -88,20 +88,18 @@ exports.like = (likeData) => {
       })
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "SELECT is_read FROM `like` WHERE doodle_idx = ?";
+          const sql = "SELECT is_read,idx FROM `like` WHERE doodle_idx = ? && is_read = 0";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
               reject(context);
             } else {
-              context.is_read = 1;
-
-              for (let i = 0; i < rows.length; i++) {
-                if (rows[i].is_read === 0) {
-                  context.is_read = 0;
-                  break;
-                }
+              if (rows.length === 1 || rows.length === 0) {
+                context.is_read = 1;
+              } else {
+                context.is_read = 0;
               }
+
               resolve(context);
             }
           });
@@ -110,6 +108,7 @@ exports.like = (likeData) => {
       .then((context) => {
         return new Promise((resolve, reject) => {
           if (context.is_read === 1) {
+            console.log(context.is_read);
             const sql = "UPDATE users SET alarm_count = alarm_count + 1 WHERE idx = (SELECT user_idx FROM doodle WHERE doodle.idx = ?)";
             context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
               if (err) {
@@ -145,20 +144,17 @@ exports.unlike = (likeData) => {
       .then(transactionWrapper.beginTransaction)
       .then((context) => {
         return new Promise((resolve, reject) => {
-          const sql = "SELECT is_read FROM `like` WHERE doodle_idx = ?";
+          const sql = "SELECT is_read FROM `like` WHERE doodle_idx = ? && is_read = 0";
           context.conn.query(sql, likeData.doodle_idx, (err, rows) => {
             if (err) {
               context.error = err;
               reject(context);
             } else {
-              context.is_read = 1;
+              if (rows.length === 0)
+                context.is_read = 0;
+              else
+                context.is_read = 1;
 
-              for (let i = 0; i < rows.length; i++) {
-                if (rows[i].is_read === 0) {
-                  context.is_read = 0;
-                  break;
-                }
-              }
               resolve(context);
             }
           });
