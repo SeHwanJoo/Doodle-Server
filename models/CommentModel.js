@@ -116,6 +116,7 @@ exports.read2 = (doodle_idx) => {
     const sql =
       `
       SELECT
+        u.idx,
         u.nickname,
         u.image,
         d.scrap_count,
