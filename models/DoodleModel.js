@@ -160,12 +160,12 @@ exports.delete = (data) => {
         if (rows.affectedRows == 0) {
           reject(1700)
         } else {
-          resolve();
+          resolve(data);
         }
       }
     });
   })
-    .then(() => {
+    .then((data) => {
       return new Promise((resolve, reject) => {
         const sql = "UPDATE users SET doodle_count = doodle_count-1 WHERE idx = ?";
         pool.query(sql, data.user_idx, (err, rows) => {
