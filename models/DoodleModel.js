@@ -152,7 +152,8 @@ exports.search = (data) => {
 
 exports.delete = (data) => {
   return new Promise((resolve, reject) => {
-    const sql = 'DELETE FROM doodle WHERE idx = ? && user_idx = ?';
+    let context = {};
+    const sql = 'SELECT scrap_count FROM doodle WHERE idx = ? && user_idx = ?';
     pool.query(sql, [data.idx, data.userIdx], (err, rows) => {
       if (err) {
         reject(err);
@@ -160,15 +161,45 @@ exports.delete = (data) => {
         if (rows.affectedRows == 0) {
           reject(1700)
         } else {
-          resolve(data.userIdx);
+          context.scrap_count = rows[0].scrap_count;
+          resolve(context);
         }
       }
     });
   })
-    .then((user_idx) => {
+    .then((context) => {
+      return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM doodle WHERE idx = ? && user_idx = ?';
+        pool.query(sql, [data.idx, data.userIdx], (err, rows) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (rows.affectedRows == 0) {
+              reject(1700)
+            } else {
+              resolve(context);
+            }
+          }
+        });
+      });
+    })
+    .then((context) => {
       return new Promise((resolve, reject) => {
         const sql = "UPDATE users SET doodle_count = doodle_count-1 WHERE idx = ?";
-        pool.query(sql, user_idx, (err, rows) => {
+        pool.query(sql, data.userIdx, (err, rows) => {
+          if (err) {
+            resolve();
+          }
+          else {
+            resolve(context);
+          }
+        });
+      });
+    })
+    .then((context) => {
+      return new Promise((resolve, reject) => {
+        const sql = "UPDATE users SET scrap_count = scrap_count-? WHERE idx = ?";
+        pool.query(sql, [context.scrap_count,data.userIdx], (err, rows) => {
           if (err) {
             resolve();
           }
