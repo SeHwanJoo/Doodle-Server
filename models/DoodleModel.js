@@ -9,7 +9,6 @@ const moment_timezone = require('moment-timezone');
 moment.tz.setDefault('Asia/Seoul');
 
 
-
 /*******************
  * TODO doodle.* 수정
  * allDoodle
@@ -36,9 +35,9 @@ exports.allDoodle = (doodleData) => {
       "  LEFT JOIN scraps ON doodle.idx = scraps.doodle_idx && scraps.user_idx = ? " +
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
       "WHERE doodle.created BETWEEN ? AND ? ";
-    if(doodleData.flag === 2){
+    if (doodleData.flag === 2) {
       sql = sql + "ORDER BY doodle.created DESC";
-    } else{
+    } else {
       sql = sql + "ORDER BY doodle.like_count DESC";
     }
     const timeArray = [doodleData.user_idx, doodleData.user_idx];
@@ -123,8 +122,6 @@ exports.other = (doodleData) => {
 };
 
 
-
-
 /****************
  * 글귀 검색
  * @param data
@@ -156,18 +153,31 @@ exports.search = (data) => {
 exports.delete = (data) => {
   return new Promise((resolve, reject) => {
     const sql = 'DELETE FROM doodle WHERE idx = ? && user_idx = ?';
-    pool.query(sql, [data.idx, data.userIdx],(err, rows) => {
-      if(err){
+    pool.query(sql, [data.idx, data.userIdx], (err, rows) => {
+      if (err) {
         reject(err);
-      } else{
-        if(rows.affectedRows == 0){
+      } else {
+        if (rows.affectedRows == 0) {
           reject(1700)
-        }else {
+        } else {
           resolve();
         }
       }
     });
-  });
+  })
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        const sql = "UPDATE users SET doodle_count = doodle_count-1 WHERE idx = ?";
+        pool.query(sql, data.user_idx, (err, rows) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            resolve();
+          }
+        });
+      });
+    })
 };
 
 exports.get = (data) => {
@@ -186,9 +196,9 @@ exports.get = (data) => {
       "  LEFT JOIN `like` ON doodle.idx = `like`.doodle_idx && `like`.user_idx = ? " +
       "WHERE doodle.idx = ? ";
     pool.query(sql, [data.userIdx, data.userIdx, data.idx], (err, rows) => {
-      if(err) {
+      if (err) {
         reject(err);
-      } else{
+      } else {
         resolve(rows[0]);
       }
     })
